@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, BrainCircuit, Building2, Cpu, GitBranch, Radar, Route } from "lucide-react";
+import { ArrowRight, BookOpen, BrainCircuit, Building2, Cpu, GitBranch, Radar, Route, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
@@ -33,6 +33,7 @@ export function HomePage() {
   const [progress] = useLocalStorage<string[]>("learning.completed", []);
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const [lockedNodeId, setLockedNodeId] = useState<string | null>(null);
+  const [detailOpen, setDetailOpen] = useState(true);
   const selectedNode = getChainOverviewNode(lockedNodeId ?? activeNodeId) ?? null;
   const done = Math.min(progress.length, 12);
   const chartData = [
@@ -41,40 +42,59 @@ export function HomePage() {
   ];
 
   return (
-    <div className="min-w-0 space-y-8 overflow-x-hidden">
-      <section className="grid min-h-[calc(100dvh-6rem)] min-w-0 grid-rows-[auto_minmax(0,1fr)_auto] gap-4 overflow-hidden lg:min-h-[calc(100dvh-5rem)] xl:h-[calc(100dvh-4rem)] xl:min-h-0 xl:grid-cols-[0.72fr_minmax(0,1.58fr)_0.86fr] xl:grid-rows-1">
-        <GlassCard className="flex min-h-0 min-w-0 flex-col justify-center overflow-hidden p-6 sm:p-8">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">SemiNexus V2.1</p>
-          <h1 className="text-4xl font-semibold tracking-normal text-slate-50 sm:text-5xl">
-            半导体产业链动态驾驶舱
-          </h1>
-          <p className="mt-5 text-sm leading-7 text-slate-300 sm:text-base">
-            首屏聚焦一张主图：设备、材料、EDA/IP、设计、制造、封测和下游应用。移动到节点查看细分方向，点击可锁定详情。
-          </p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Button to="/chain" icon={<GitBranch className="h-4 w-4" />}>完整地图</Button>
-            <Button to="/ai-computing" variant="secondary" icon={<BrainCircuit className="h-4 w-4" />}>AI 核心链</Button>
+    <div className="min-w-0 overflow-x-hidden">
+      <section className="fullscreen-cockpit -mx-4 -mt-6 sm:-mx-6 lg:-mx-20 lg:-mt-8">
+        <div className="absolute inset-0 p-4 sm:p-6 lg:p-8">
+          <SemiconductorHeroMap
+            activeId={activeNodeId}
+            lockedId={lockedNodeId}
+            onActiveChange={(id) => {
+              setActiveNodeId(id);
+              if (id) setDetailOpen(true);
+            }}
+            onLockChange={(id) => {
+              setLockedNodeId(id);
+              if (id) setDetailOpen(true);
+            }}
+          />
+        </div>
+
+        <div className="pointer-events-none absolute left-6 top-6 z-20 max-w-[520px] sm:left-8 sm:top-8 lg:left-28">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300/90">SemiNexus V2.2</p>
+          <h1 className="mt-2 text-2xl font-semibold text-slate-50 sm:text-4xl">半导体产业链动态主图</h1>
+        </div>
+
+        {detailOpen ? (
+          <div className="absolute right-4 top-24 z-30 max-h-[calc(100dvh-8rem)] w-[min(390px,calc(100vw-2rem))] sm:right-6 lg:right-8">
+            <button
+              type="button"
+              onClick={() => setDetailOpen(false)}
+              className="absolute -right-2 -top-2 z-10 grid h-9 w-9 place-items-center rounded-full border border-cyan-300/20 bg-slate-950/90 text-slate-200 shadow-lg"
+              aria-label="关闭详情"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <SemiconductorHoverPanel node={selectedNode} locked={Boolean(lockedNodeId)} />
           </div>
-        </GlassCard>
-
-        <SemiconductorHeroMap
-          activeId={activeNodeId}
-          lockedId={lockedNodeId}
-          onActiveChange={setActiveNodeId}
-          onLockChange={setLockedNodeId}
-        />
-
-        <SemiconductorHoverPanel node={selectedNode} locked={Boolean(lockedNodeId)} />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setDetailOpen(true)}
+            className="absolute right-5 top-24 z-30 rounded-2xl border border-cyan-300/20 bg-slate-950/78 px-4 py-3 text-sm font-semibold text-cyan-100 shadow-xl backdrop-blur-xl"
+          >
+            打开详情
+          </button>
+        )}
       </section>
 
-      <section className="grid min-w-0 gap-5 lg:grid-cols-[1fr_340px]">
+      <section className="grid min-w-0 gap-5 pt-8 lg:grid-cols-[1fr_340px]">
         <GlassCard className="p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-cyan-300">第二屏学习入口</p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-50">从主图进入具体学习任务</h2>
+              <p className="text-sm font-semibold text-cyan-300">从主图进入学习</p>
+              <h2 className="mt-2 text-2xl font-semibold text-slate-50">半导体与 AI 产业链学习入口</h2>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
-                首页首屏只承担驾驶舱总览；术语、学习路线、主题雷达和公司映射下移到这里，避免抢占主视觉。
+                说明、功能入口、术语和学习路线全部下移，首屏只让产业链动态主图承担视觉重点。
               </p>
             </div>
             <Button to="/ai-computing" icon={<ArrowRight className="h-4 w-4" />}>查看 AI 产业链</Button>
@@ -110,7 +130,7 @@ export function HomePage() {
         </GlassCard>
       </section>
 
-      <section>
+      <section className="pt-8">
         <h2 className="mb-4 flex items-center gap-2 text-2xl font-semibold text-slate-50"><Radar className="h-6 w-6 text-cyan-300" /> 当前主线雷达</h2>
         <div className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-5">
           {themes.map((theme) => (
@@ -129,7 +149,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="grid min-w-0 gap-4 md:grid-cols-3">
+      <section className="grid min-w-0 gap-4 pt-8 md:grid-cols-3">
         {(["上游支撑", "中游核心", "下游应用"] as const).map((category) => (
           <GlassCard key={category}>
             <p className="text-sm font-semibold text-cyan-300">{category}</p>
@@ -143,7 +163,7 @@ export function HomePage() {
         ))}
       </section>
 
-      <section className="grid min-w-0 gap-4 lg:grid-cols-[1fr_1fr]">
+      <section className="grid min-w-0 gap-4 py-8 lg:grid-cols-[1fr_1fr]">
         <GlassCard>
           <h2 className="text-xl font-semibold text-slate-50">知识芯片库</h2>
           <div className="mt-4 flex flex-wrap gap-2">

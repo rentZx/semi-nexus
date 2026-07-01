@@ -12,7 +12,7 @@ type SemiconductorHoverPanelProps = {
 const overview = {
   label: "半导体产业链总览",
   locationLabel: "默认视图",
-  summary: "主图只保留设备、材料、EDA/IP、设计、制造、封测和下游应用七个核心节点，帮助先建立产业链骨架。",
+  summary: "主图只保留设备、材料、EDA/IP、设计、制造、封测和下游应用七个核心节点。",
   children: ["设备与材料支撑制造", "EDA/IP支撑设计", "设计交付制造", "制造交付封测", "下游需求反馈设计"],
   barriers: ["工艺积累", "客户验证", "良率控制", "供应链协同"],
   drivers: ["AI算力", "国产替代", "先进封装", "汽车电子"],
@@ -24,8 +24,8 @@ export function SemiconductorHoverPanel({ node, locked }: SemiconductorHoverPane
   const view = node ?? overview;
 
   return (
-    <aside className="glass flex h-full min-h-[420px] min-w-0 flex-col overflow-y-auto rounded-[1.75rem] p-4 sm:p-5 xl:min-h-0">
-      <div className="flex items-center justify-between gap-3">
+    <aside className="glass max-h-[calc(100dvh-8rem)] min-w-0 overflow-y-auto rounded-[1.75rem] p-4 shadow-2xl sm:p-5">
+      <div className="flex items-center justify-between gap-3 pr-7">
         <p className="truncate text-sm font-semibold text-cyan-300">{view.locationLabel}</p>
         <Badge tone={locked ? "amber" : "cyan"}>{locked ? "已锁定" : node ? "节点详情" : "总览"}</Badge>
       </div>
@@ -82,7 +82,7 @@ export function SemiconductorHoverPanel({ node, locked }: SemiconductorHoverPane
         )}
       </PanelSection>
 
-      <div className="mt-auto pt-5">
+      <div className="mt-5">
         {node?.segmentId ? (
           <Button to={`/segments/${node.segmentId}`} icon={<ArrowRight className="h-4 w-4" />}>
             查看环节详情

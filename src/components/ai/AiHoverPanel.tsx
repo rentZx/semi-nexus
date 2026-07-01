@@ -12,7 +12,7 @@ type AiHoverPanelProps = {
 const overview = {
   label: "AI 算力产业链总览",
   category: "默认视图",
-  summary: "默认只展示三条核心链路：核心算力链、光通信链、散热电源链。说明和公司映射集中在右侧面板，避免主图信息过载。",
+  summary: "默认只展示三条核心链路：核心算力链、光通信链、散热电源链。",
   whyImportant: "AI 基础设施不是单一芯片，而是芯片、存储、封装、载板、PCB、服务器、互联、散热、电源和数据中心共同联动。",
   relatedNodes: ["AI芯片", "HBM", "先进封装", "AI服务器", "数据中心"],
   benefitLogic: "从算力需求出发，观察它如何向上游器件、材料、制造和系统集成环节传导。",
@@ -25,8 +25,8 @@ export function AiHoverPanel({ node, locked }: AiHoverPanelProps) {
   const view = node ?? overview;
 
   return (
-    <aside className="glass flex h-full min-h-[520px] min-w-0 flex-col overflow-hidden rounded-[1.75rem] p-5">
-      <div className="flex items-center justify-between gap-3">
+    <aside className="glass max-h-[calc(100dvh-10rem)] min-w-0 overflow-y-auto rounded-[1.75rem] p-5 shadow-2xl">
+      <div className="flex items-center justify-between gap-3 pr-7">
         <p className="truncate text-sm font-semibold text-cyan-300">{view.category}</p>
         <Badge tone={locked ? "amber" : "cyan"}>{locked ? "已锁定" : node ? "节点详情" : "总览"}</Badge>
       </div>
@@ -81,7 +81,7 @@ export function AiHoverPanel({ node, locked }: AiHoverPanelProps) {
         </div>
       </PanelBlock>
 
-      <div className="mt-auto flex flex-wrap gap-2 pt-5">
+      <div className="mt-5 flex flex-wrap gap-2">
         {view.relatedTerms.map((term) => (
           <Link key={term} to={`/glossary?term=${encodeURIComponent(term)}`}>
             <Badge tone="violet">{term}</Badge>
