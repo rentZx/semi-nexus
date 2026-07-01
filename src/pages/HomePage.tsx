@@ -1,9 +1,13 @@
-import { ArrowRight, BookOpen, BrainCircuit, Building2, Cpu, GitBranch, Radar, Route, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, BrainCircuit, Building2, Cpu, GitBranch, Radar, Route } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { Disclaimer } from "../components/Disclaimer";
+import { SemiconductorHeroMap } from "../components/home/SemiconductorHeroMap";
+import { SemiconductorHoverPanel } from "../components/home/SemiconductorHoverPanel";
 import { Button } from "../components/ui/Button";
 import { GlassCard } from "../components/ui/GlassCard";
+import { getChainOverviewNode } from "../data/chainOverview";
 import { glossary } from "../data/glossary";
 import { segments } from "../data/segments";
 import { useLocalStorage } from "../hooks/useLocalStorage";
@@ -27,6 +31,9 @@ const quickLinks = [
 
 export function HomePage() {
   const [progress] = useLocalStorage<string[]>("learning.completed", []);
+  const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
+  const [lockedNodeId, setLockedNodeId] = useState<string | null>(null);
+  const selectedNode = getChainOverviewNode(lockedNodeId ?? activeNodeId) ?? null;
   const done = Math.min(progress.length, 12);
   const chartData = [
     { name: "已完成", value: done },
@@ -35,22 +42,82 @@ export function HomePage() {
 
   return (
     <div className="space-y-8">
-      <section className="grid gap-6 xl:grid-cols-[1fr_1.25fr_0.85fr]">
+      <section className="grid gap-6 xl:grid-cols-[0.65fr_1.65fr_0.85fr]">
         <GlassCard className="overflow-hidden p-7 sm:p-9">
-          <p className="mb-4 text-sm font-semibold text-cyan-300">AI 算力产业指挥中心</p>
-          <h1 className="max-w-4xl text-4xl font-semibold tracking-normal text-slate-50 sm:text-6xl">
-            半导体产业链学习地图
+          <p className="mb-4 text-sm font-semibold text-cyan-300">Semiconductor & AI Industry Cockpit</p>
+          <h1 className="max-w-4xl text-5xl font-semibold tracking-normal text-slate-50 sm:text-6xl">
+            SemiNexus
           </h1>
-          <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
-            从材料、设备、设计、制造、封测到 AI 算力应用，建立一套清晰的产业链认知框架。
+          <p className="mt-3 text-xl font-semibold text-cyan-100">半导体与 AI 产业链交互式驾驶舱</p>
+          <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300">
+            从设备、材料、设计、制造、封测到 AI 算力基础设施，用一张动态产业链地图建立完整认知。
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button to="/chain" icon={<GitBranch className="h-4 w-4" />}>开始学习产业链</Button>
-            <Button to="/companies" variant="secondary" icon={<Building2 className="h-4 w-4" />}>查看A股映射</Button>
-            <Button to="/ai-computing" variant="ghost" icon={<BrainCircuit className="h-4 w-4" />}>进入AI算力专题</Button>
+            <Button to="/chain" icon={<GitBranch className="h-4 w-4" />}>进入产业链地图</Button>
+            <Button to="/ai-computing" variant="secondary" icon={<BrainCircuit className="h-4 w-4" />}>查看 AI 全景图</Button>
+            <Button to="/companies" variant="ghost" icon={<Building2 className="h-4 w-4" />}>查看 A股映射</Button>
+          </div>
+          <div className="mt-8 rounded-2xl border border-cyan-300/15 bg-slate-950/42 p-4 text-sm leading-7 text-slate-300">
+            操作提示：移动鼠标到任一产业模块，可展开细分方向；点击节点可锁定详情，点击空白区域解除锁定。
           </div>
         </GlassCard>
-        <CockpitCore />
+        <SemiconductorHeroMap
+          activeId={activeNodeId}
+          lockedId={lockedNodeId}
+          onActiveChange={setActiveNodeId}
+          onLockChange={setLockedNodeId}
+        />
+        <SemiconductorHoverPanel node={selectedNode} locked={Boolean(lockedNodeId)} />
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
+        {(["上游支撑", "中游核心", "下游应用"] as const).map((category) => (
+          <GlassCard key={category}>
+            <p className="text-sm font-semibold text-cyan-300">{category}</p>
+            <h2 className="mt-2 text-xl font-semibold text-slate-50">
+              {category === "上游支撑" ? "设备、材料、EDA/IP" : category === "中游核心" ? "设计、制造、封测" : "AI服务器、汽车、工业"}
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-slate-300">
+              共 {segments.filter((segment) => segment.category === category).length} 个学习节点，覆盖作用、壁垒、驱动和风险。
+            </p>
+          </GlassCard>
+        ))}
+      </section>
+
+      <section className="grid gap-5 lg:grid-cols-[1fr_360px]">
+        <GlassCard className="hud-grid min-h-[320px] overflow-hidden p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-cyan-300">AI Landscape Preview</p>
+              <h2 className="mt-2 text-2xl font-semibold text-slate-50">AI算力全景图预览</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
+                AI芯片、HBM、先进封装、IC载板、PCB、光模块、液冷、电源、服务器、数据中心和应用共同形成算力基础设施。
+              </p>
+            </div>
+            <Button to="/ai-computing" icon={<ArrowRight className="h-4 w-4" />}>进入 AI 作战图</Button>
+          </div>
+          <svg viewBox="0 0 920 220" className="mt-6 h-auto w-full min-w-[720px]" role="img" aria-label="AI产业链预览">
+            <defs>
+              <linearGradient id="home-ai-flow" x1="0" x2="1">
+                <stop offset="0%" stopColor="#38bdf8" />
+                <stop offset="60%" stopColor="#22d3ee" />
+                <stop offset="100%" stopColor="#8b5cf6" />
+              </linearGradient>
+            </defs>
+            {["AI芯片", "HBM", "先进封装", "IC载板", "PCB", "AI服务器", "数据中心"].map((label, index) => {
+              const x = 70 + index * 128;
+              return (
+                <g key={label}>
+                  {index < 6 ? (
+                    <path className="energy-line" d={`M ${x + 48} 105 C ${x + 72} 105 ${x + 92} 105 ${x + 116} 105`} stroke="url(#home-ai-flow)" strokeWidth="2.4" fill="none" />
+                  ) : null}
+                  <rect className="pulse-node" x={x - 48} y="74" width="96" height="62" rx="20" fill="rgba(15,23,42,0.84)" stroke="rgba(34,211,238,0.45)" />
+                  <text x={x} y="110" textAnchor="middle" fill="#e5e7eb" fontSize="13" fontWeight="800">{label}</text>
+                </g>
+              );
+            })}
+          </svg>
+        </GlassCard>
         <GlassCard>
           <h2 className="text-lg font-semibold text-slate-50">学习进度</h2>
           <p className="mt-2 text-sm leading-6 text-slate-300">完成学习路线中的模块后，这里会自动更新。</p>
@@ -66,20 +133,6 @@ export function HomePage() {
           </div>
           <p className="text-center text-3xl font-semibold text-cyan-100">{done}/12</p>
         </GlassCard>
-      </section>
-
-      <section className="grid gap-4 md:grid-cols-3">
-        {(["上游支撑", "中游核心", "下游应用"] as const).map((category) => (
-          <GlassCard key={category}>
-            <p className="text-sm font-semibold text-cyan-300">{category}</p>
-            <h2 className="mt-2 text-xl font-semibold text-slate-50">
-              {category === "上游支撑" ? "设备、材料、EDA/IP" : category === "中游核心" ? "设计、制造、封测" : "AI服务器、汽车、工业"}
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-slate-300">
-              共 {segments.filter((segment) => segment.category === category).length} 个学习节点，覆盖作用、壁垒、驱动和风险。
-            </p>
-          </GlassCard>
-        ))}
       </section>
 
       <section>
@@ -128,57 +181,5 @@ export function HomePage() {
         <Disclaimer />
       </section>
     </div>
-  );
-}
-
-function CockpitCore() {
-  const nodes = [
-    ["设备", 80, 88],
-    ["材料", 72, 188],
-    ["EDA/IP", 134, 268],
-    ["设计", 310, 86],
-    ["制造", 336, 270],
-    ["封测", 468, 188],
-    ["AI算力", 586, 92],
-    ["应用", 590, 272],
-  ] as const;
-
-  return (
-    <GlassCard className="hud-grid flex min-h-[420px] items-center justify-center overflow-hidden p-3">
-      <svg viewBox="0 0 680 380" className="h-full min-h-[360px] w-full" role="img" aria-label="半导体产业链驾驶舱核心">
-        <defs>
-          <radialGradient id="chipGlow" cx="50%" cy="50%" r="60%">
-            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.95" />
-            <stop offset="55%" stopColor="#2563eb" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#020617" stopOpacity="0" />
-          </radialGradient>
-          <linearGradient id="flowGradient" x1="0" x2="1">
-            <stop offset="0%" stopColor="#38bdf8" />
-            <stop offset="55%" stopColor="#22d3ee" />
-            <stop offset="100%" stopColor="#8b5cf6" />
-          </linearGradient>
-        </defs>
-        <circle cx="340" cy="190" r="148" fill="none" stroke="rgba(56,189,248,0.18)" strokeWidth="1.5" />
-        <circle cx="340" cy="190" r="110" fill="none" stroke="rgba(139,92,246,0.22)" strokeWidth="1.5" />
-        <path className="radar-sweep" style={{ transformOrigin: "340px 190px" }} d="M340 190 L340 42 A148 148 0 0 1 445 86 Z" fill="rgba(34,211,238,0.08)" />
-        {nodes.map(([label, x, y]) => (
-          <g key={label}>
-            <path className="energy-line" d={`M ${x} ${y} C 220 ${y} 250 190 310 190`} fill="none" stroke="url(#flowGradient)" strokeWidth="2" opacity="0.6" />
-            <rect className="pulse-node" x={x - 42} y={y - 18} width="84" height="36" rx="18" fill="rgba(15,23,42,0.92)" stroke="rgba(56,189,248,0.55)" />
-            <text x={x} y={y + 5} textAnchor="middle" fill="#e5e7eb" fontSize="13" fontWeight="700">{label}</text>
-          </g>
-        ))}
-        <rect x="272" y="122" width="136" height="136" rx="24" fill="url(#chipGlow)" opacity="0.85" />
-        <rect x="292" y="142" width="96" height="96" rx="18" fill="rgba(2,6,23,0.82)" stroke="#22d3ee" strokeWidth="2" />
-        {Array.from({ length: 6 }).map((_, i) => (
-          <g key={i}>
-            <line x1={286 + i * 18} y1="132" x2={286 + i * 18} y2="112" stroke="#38bdf8" strokeWidth="2" opacity="0.65" />
-            <line x1={286 + i * 18} y1="268" x2={286 + i * 18} y2="248" stroke="#38bdf8" strokeWidth="2" opacity="0.65" />
-          </g>
-        ))}
-        <Zap x={318} y={164} width="42" height="42" color="#22d3ee" />
-        <text x="340" y="226" textAnchor="middle" fill="#e5e7eb" fontSize="15" fontWeight="700">产业链核心</text>
-      </svg>
-    </GlassCard>
   );
 }
