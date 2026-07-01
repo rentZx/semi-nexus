@@ -33,7 +33,7 @@ export function HomePage() {
   const [progress] = useLocalStorage<string[]>("learning.completed", []);
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const [lockedNodeId, setLockedNodeId] = useState<string | null>(null);
-  const [detailOpen, setDetailOpen] = useState(true);
+  const [detailOpen, setDetailOpen] = useState(false);
   const selectedNode = getChainOverviewNode(lockedNodeId ?? activeNodeId) ?? null;
   const done = Math.min(progress.length, 12);
   const chartData = [
@@ -50,7 +50,6 @@ export function HomePage() {
             lockedId={lockedNodeId}
             onActiveChange={(id) => {
               setActiveNodeId(id);
-              if (id) setDetailOpen(true);
             }}
             onLockChange={(id) => {
               setLockedNodeId(id);
@@ -60,7 +59,7 @@ export function HomePage() {
         </div>
 
         <div className="pointer-events-none absolute left-6 top-6 z-20 max-w-[520px] sm:left-8 sm:top-8 lg:left-28">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300/90">SemiNexus V2.2</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300/90">SemiNexus V2.3</p>
           <h1 className="mt-2 text-2xl font-semibold text-slate-50 sm:text-4xl">半导体产业链动态主图</h1>
         </div>
 

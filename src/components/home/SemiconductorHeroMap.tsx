@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { chainOverviewEdges, chainOverviewNodes } from "../../data/chainOverview";
-import type { ChainOverviewNode } from "../../data/chainOverview";
+import { chainOverviewEdges, chainOverviewNodes, getChainOverviewNode, strongChainOverviewEdges } from "../../data/chainOverview";
+import type { ChainOverviewEdge, ChainOverviewNode } from "../../data/chainOverview";
 import { cn } from "../../utils/cn";
 
 type PositionedNode = ChainOverviewNode & {
@@ -15,32 +15,51 @@ type SemiconductorHeroMapProps = {
   onLockChange: (nodeId: string | null) => void;
 };
 
+const NODE_W = 210;
+const NODE_H = 82;
+
 const positions: Record<string, { x: number; y: number }> = {
-  equipment: { x: 230, y: 190 },
-  materials: { x: 230, y: 360 },
-  "eda-ip": { x: 230, y: 530 },
-  design: { x: 540, y: 190 },
-  manufacturing: { x: 650, y: 360 },
-  packaging: { x: 760, y: 530 },
-  downstream: { x: 1030, y: 360 },
+  "eda-ip": { x: 230, y: 170 },
+  equipment: { x: 230, y: 350 },
+  materials: { x: 230, y: 530 },
+  design: { x: 560, y: 170 },
+  manufacturing: { x: 820, y: 350 },
+  packaging: { x: 1080, y: 530 },
+  downstream: { x: 1350, y: 350 },
 };
 
 const categoryLabels = [
-  { label: "上游支撑", x: 116, y: 96 },
-  { label: "中游核心", x: 500, y: 96 },
-  { label: "需求牵引", x: 925, y: 96 },
+  { label: "上游支撑", x: 126, y: 86 },
+  { label: "中游核心", x: 640, y: 86 },
+  { label: "下游应用", x: 1270, y: 86 },
 ];
+
+const edgeLaneOffset: Record<string, number> = {
+  "eda-design": 0,
+  "equipment-manufacturing": -14,
+  "materials-manufacturing": 14,
+  "design-manufacturing": 14,
+  "manufacturing-packaging": -14,
+  "packaging-downstream": 0,
+  "equipment-packaging": -28,
+  "materials-packaging": 28,
+};
 
 export function SemiconductorHeroMap({ activeId, lockedId, onActiveChange, onLockChange }: SemiconductorHeroMapProps) {
   const effectiveId = lockedId ?? activeId;
+  const activeNode = getChainOverviewNode(effectiveId);
   const positionedNodes = useMemo<PositionedNode[]>(
     () => chainOverviewNodes.map((node) => ({ ...node, ...positions[node.id] })),
     []
   );
+  const activeStrongEdges = strongChainOverviewEdges.filter((edge) => edge.source === effectiveId || edge.target === effectiveId);
   const relatedIds = new Set<string>([
     ...(effectiveId ? [effectiveId] : []),
-    ...chainOverviewEdges.filter((edge) => edge.source === effectiveId || edge.target === effectiveId).flatMap((edge) => [edge.source, edge.target]),
+    ...activeStrongEdges.flatMap((edge) => [edge.source, edge.target]),
   ]);
+  const displayedEdges = effectiveId
+    ? chainOverviewEdges.filter((edge) => edge.strength === "strong" || edge.source === effectiveId || edge.target === effectiveId)
+    : strongChainOverviewEdges;
 
   function handleLeave() {
     if (!lockedId) onActiveChange(null);
@@ -53,65 +72,43 @@ export function SemiconductorHeroMap({ activeId, lockedId, onActiveChange, onLoc
   return (
     <div className="glass hud-grid h-full min-h-0 min-w-0 overflow-hidden rounded-[2rem] p-4 sm:p-5" onClick={handleCanvasClick}>
       <svg
-        viewBox="0 0 1240 720"
+        viewBox="0 0 1500 720"
         preserveAspectRatio="xMidYMid meet"
-        className="block h-full w-full select-none"
+        className={cn("block h-full w-full select-none transition-transform duration-300", lockedId && "translate-x-[-4%] scale-[0.94]")}
         role="img"
         aria-label="半导体产业链动态主图"
       >
         <defs>
-          <linearGradient id="semi-flow-v22" x1="0" x2="1">
+          <linearGradient id="semi-flow-v23" x1="0" x2="1">
             <stop offset="0%" stopColor="#38bdf8" />
-            <stop offset="66%" stopColor="#22d3ee" />
+            <stop offset="72%" stopColor="#22d3ee" />
             <stop offset="100%" stopColor="#a78bfa" />
           </linearGradient>
-          <radialGradient id="semi-core-v22" cx="50%" cy="50%" r="55%">
-            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.42" />
-            <stop offset="55%" stopColor="#2563eb" stopOpacity="0.13" />
-            <stop offset="100%" stopColor="#020617" stopOpacity="0" />
-          </radialGradient>
-          <filter id="semi-soft-glow-v22" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="2.2" result="blur" />
+          <filter id="semi-soft-glow-v23" x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
-          <marker id="semi-arrow-v22" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <marker id="semi-arrow-v23" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
             <path d="M0,0 L0,6 L8,3 z" fill="#22d3ee" />
           </marker>
         </defs>
 
-        <rect x="48" y="54" width="1144" height="610" rx="38" fill="rgba(2,6,23,0.28)" stroke="rgba(56,189,248,0.12)" />
-        <circle cx="650" cy="360" r="190" fill="url(#semi-core-v22)" opacity="0.9" />
+        <rect x="46" y="52" width="1408" height="616" rx="38" fill="rgba(2,6,23,0.26)" stroke="rgba(56,189,248,0.12)" />
         {categoryLabels.map((item) => (
           <text key={item.label} x={item.x} y={item.y} fill="#67e8f9" fontSize="21" fontWeight="850">
             {item.label}
           </text>
         ))}
 
-        {chainOverviewEdges.map((edge) => {
+        {displayedEdges.map((edge) => {
           const source = positionedNodes.find((node) => node.id === edge.source);
           const target = positionedNodes.find((node) => node.id === edge.target);
           if (!source || !target) return null;
           const highlighted = !effectiveId || edge.source === effectiveId || edge.target === effectiveId;
-          const d =
-            edge.source === "downstream"
-              ? `M ${source.x - 106} ${source.y - 8} C 890 180 660 132 ${target.x + 106} ${target.y - 8}`
-              : `M ${source.x + 106} ${source.y} C ${(source.x + target.x) / 2} ${source.y} ${(source.x + target.x) / 2} ${target.y} ${target.x - 106} ${target.y}`;
-          return (
-            <path
-              key={edge.id}
-              className={highlighted ? "energy-line" : ""}
-              d={d}
-              fill="none"
-              stroke="url(#semi-flow-v22)"
-              strokeLinecap="round"
-              strokeWidth={highlighted ? 3.2 : 1.4}
-              opacity={highlighted ? 0.78 : 0.11}
-              markerEnd={highlighted ? "url(#semi-arrow-v22)" : undefined}
-            />
-          );
+          return <FlowEdge key={edge.id} edge={edge} source={source} target={target} highlighted={highlighted} />;
         })}
 
         {positionedNodes.map((node) => (
@@ -131,8 +128,47 @@ export function SemiconductorHeroMap({ activeId, lockedId, onActiveChange, onLoc
             }}
           />
         ))}
+
+        {activeNode && !lockedId ? <HoverTooltip node={activeNode} /> : null}
       </svg>
     </div>
+  );
+}
+
+function FlowEdge({
+  edge,
+  source,
+  target,
+  highlighted,
+}: {
+  edge: ChainOverviewEdge;
+  source: PositionedNode;
+  target: PositionedNode;
+  highlighted: boolean;
+}) {
+  const offset = edgeLaneOffset[edge.id] ?? 0;
+  const startX = source.x + NODE_W / 2 + 12;
+  const startY = source.y + offset;
+  const endX = target.x - NODE_W / 2 - 12;
+  const endY = target.y + offset;
+  const midX = startX + Math.max(18, (endX - startX) * 0.5);
+  const isWeak = edge.strength === "weak";
+  const d = `M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`;
+
+  return (
+    <g opacity={isWeak && !highlighted ? 0 : 1}>
+      <path
+        className={highlighted && !isWeak ? "energy-line" : ""}
+        d={d}
+        fill="none"
+        stroke={isWeak ? "rgba(148,163,184,0.38)" : "url(#semi-flow-v23)"}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={highlighted ? (isWeak ? 1.6 : 3) : 1.4}
+        opacity={highlighted ? (isWeak ? 0.45 : 0.78) : 0.16}
+        markerEnd={highlighted && !isWeak ? "url(#semi-arrow-v23)" : undefined}
+      />
+    </g>
   );
 }
 
@@ -151,28 +187,27 @@ function HeroNode({
   onLeave: () => void;
   onClick: (event: React.MouseEvent<SVGGElement>) => void;
 }) {
-  const width = node.id === "downstream" ? 218 : 204;
   const fill = active ? "rgba(34,211,238,0.23)" : "rgba(15,23,42,0.9)";
   const stroke = active ? "rgba(34,211,238,0.92)" : "rgba(56,189,248,0.32)";
 
   return (
     <g
-      className={cn("cursor-pointer transition-opacity duration-200", dimmed && "opacity-28")}
+      className={cn("cursor-pointer transition-opacity duration-200", dimmed && "opacity-30")}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onClick={onClick}
     >
       <rect
         className={active ? "pulse-node" : ""}
-        x={node.x - width / 2}
-        y={node.y - 42}
-        width={width}
-        height="84"
+        x={node.x - NODE_W / 2}
+        y={node.y - NODE_H / 2}
+        width={NODE_W}
+        height={NODE_H}
         rx="22"
         fill={fill}
         stroke={stroke}
         strokeWidth={active ? 2.8 : 1.5}
-        filter={active ? "url(#semi-soft-glow-v22)" : undefined}
+        filter={active ? "url(#semi-soft-glow-v23)" : undefined}
       />
       <text x={node.x} y={node.y - 8} textAnchor="middle" fill="#f8fafc" fontSize="22" fontWeight="850">
         {node.label}
@@ -181,5 +216,21 @@ function HeroNode({
         {node.locationLabel}
       </text>
     </g>
+  );
+}
+
+function HoverTooltip({ node }: { node: ChainOverviewNode }) {
+  const pos = positions[node.id];
+  const tooltipX = node.category === "downstream" ? pos.x - 330 : pos.x + 132;
+  const tooltipY = Math.max(108, Math.min(pos.y - 78, 548));
+
+  return (
+    <foreignObject x={tooltipX} y={tooltipY} width="300" height="150" className="pointer-events-none">
+      <div className="rounded-2xl border border-cyan-300/20 bg-slate-950/88 p-4 shadow-2xl backdrop-blur-xl">
+        <p className="text-sm font-semibold text-cyan-200">{node.label}</p>
+        <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-300">{node.summary}</p>
+        <p className="mt-3 text-xs font-semibold text-cyan-300">点击查看详情</p>
+      </div>
+    </foreignObject>
   );
 }

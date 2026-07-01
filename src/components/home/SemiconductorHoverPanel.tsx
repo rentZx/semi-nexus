@@ -14,6 +14,7 @@ const overview = {
   locationLabel: "默认视图",
   summary: "主图只保留设备、材料、EDA/IP、设计、制造、封测和下游应用七个核心节点。",
   children: ["设备与材料支撑制造", "EDA/IP支撑设计", "设计交付制造", "制造交付封测", "下游需求反馈设计"],
+  childNodes: [],
   barriers: ["工艺积累", "客户验证", "良率控制", "供应链协同"],
   drivers: ["AI算力", "国产替代", "先进封装", "汽车电子"],
   exampleCompanies: [],
@@ -39,6 +40,19 @@ export function SemiconductorHoverPanel({ node, locked }: SemiconductorHoverPane
           ))}
         </div>
       </PanelSection>
+
+      {view.childNodes.length ? (
+        <PanelSection icon={<ArrowRight className="h-4 w-4" />} title="对应关系">
+          <div className="grid gap-2">
+            {view.childNodes.map((child) => (
+              <div key={child.label} className="rounded-2xl border border-cyan-300/12 bg-slate-950/34 px-3 py-2 text-sm leading-6 text-slate-300">
+                <span className="font-semibold text-slate-100">{child.label}</span>
+                {child.targets.length ? <span className="text-slate-400"> {"->"} {child.targets.map(formatTarget).join(" / ")}</span> : null}
+              </div>
+            ))}
+          </div>
+        </PanelSection>
+      ) : null}
 
       <PanelSection icon={<Cpu className="h-4 w-4" />} title="关键壁垒">
         <div className="grid gap-2">
@@ -107,4 +121,14 @@ function PanelSection({ icon, title, children }: { icon: React.ReactNode; title:
       {children}
     </section>
   );
+}
+
+function formatTarget(target: string) {
+  const labels: Record<string, string> = {
+    design: "芯片设计",
+    manufacturing: "晶圆制造",
+    packaging: "封装测试",
+    downstream: "下游应用",
+  };
+  return labels[target] ?? target;
 }
