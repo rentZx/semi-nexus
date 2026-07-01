@@ -8,50 +8,45 @@ import { getAiLandscapeNode } from "../data/aiLandscape";
 
 const focusPaths = [
   {
-    title: "AI 核心算力链",
-    path: "AI芯片 → HBM → 先进封装 → IC载板 → PCB → AI服务器 → 数据中心",
+    title: "核心算力链",
+    path: "AI芯片 -> HBM -> 先进封装 -> IC载板/ABF -> PCB/高速板 -> AI服务器 -> 数据中心",
     tone: "cyan" as const,
   },
   {
     title: "光通信链",
-    path: "AI服务器 → 数据中心 → 光模块 → CPO → 高速互联",
-    tone: "blue" as const,
+    path: "AI服务器 -> 光模块/CPO -> 数据中心互联 -> 数据中心",
+    tone: "violet" as const,
   },
   {
     title: "散热电源链",
-    path: "AI服务器 → 高功耗 → 液冷散热 → 服务器电源 → 功率器件",
+    path: "AI服务器 -> 液冷散热 -> 服务器电源 -> 功率器件",
     tone: "amber" as const,
-  },
-  {
-    title: "应用链",
-    path: "数据中心 → 大模型训练 → 推理部署 → AIGC / 机器人 / 智能驾驶 / 企业AI",
-    tone: "violet" as const,
   },
 ];
 
 export function AiComputingPage() {
-  const [activeNodeId, setActiveNodeId] = useState<string | null>("hbm");
+  const [activeNodeId, setActiveNodeId] = useState<string | null>("ai-server");
   const [lockedNodeId, setLockedNodeId] = useState<string | null>(null);
   const selectedNode = getAiLandscapeNode(lockedNodeId ?? activeNodeId) ?? null;
 
   return (
-    <div>
+    <div className="min-w-0 overflow-x-hidden">
       <PageHeader
-        eyebrow="AI 产业链全景图"
-        title="一图看懂 AI 算力基础设施"
-        description="从算力芯片、HBM、先进封装、IC载板、PCB、光模块、液冷、电源、AI服务器、数据中心到模型和应用，展示 AI 产业链的关键联动。"
+        eyebrow="AI 产业链核心图"
+        title="三条链看懂 AI 算力基础设施"
+        description="默认只展示核心算力链、光通信链和散热电源链，hover 节点时只高亮相关链路，详细解释放在右侧面板。"
       />
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-6 grid min-w-0 gap-4 md:grid-cols-3">
         {focusPaths.map((item) => (
-          <section key={item.title} className="soft-card rounded-3xl p-5">
+          <section key={item.title} className="soft-card rounded-2xl p-5">
             <Badge tone={item.tone}>{item.title}</Badge>
             <p className="mt-3 text-sm leading-7 text-slate-300">{item.path}</p>
           </section>
         ))}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1fr_390px]">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_390px]">
         <AiLandscapeMap
           activeId={activeNodeId}
           lockedId={lockedNodeId}

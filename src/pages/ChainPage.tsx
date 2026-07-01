@@ -25,10 +25,10 @@ export function ChainPage() {
       <div className="mb-5 max-w-xl">
         <SearchInput value={query} onChange={setQuery} placeholder="搜索节点，例如 刻蚀、HBM、PCB、AI服务器" />
       </div>
-      <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
-        <GlassCard className="hud-grid overflow-x-auto">
-          <div className="min-w-[760px]">
-            <svg viewBox="0 0 920 520" className="h-auto w-full" role="img" aria-label="半导体产业链地图">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <GlassCard className="hud-grid min-w-0 overflow-hidden">
+          <div className="min-w-0">
+            <svg viewBox="0 0 920 520" preserveAspectRatio="xMidYMid meet" className="block h-auto w-full" role="img" aria-label="半导体产业链地图">
               <defs>
                 <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
                   <path d="M0,0 L0,6 L8,3 z" fill="#22d3ee" />
