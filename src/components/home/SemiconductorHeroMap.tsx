@@ -153,19 +153,20 @@ function FlowEdge({
   const endY = target.y + offset;
   const midX = startX + Math.max(18, (endX - startX) * 0.5);
   const isWeak = edge.strength === "weak";
-  const d = `M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`;
+  const d = startY === endY
+    ? `M ${startX} ${startY} L ${endX} ${endY}`
+    : `M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`;
 
   return (
     <g opacity={isWeak && !highlighted ? 0 : 1}>
       <path
-        className={highlighted && !isWeak ? "energy-line" : ""}
         d={d}
         fill="none"
         stroke={isWeak ? "rgba(148,163,184,0.38)" : "url(#semi-flow-v23)"}
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={highlighted ? (isWeak ? 1.6 : 3) : 1.4}
-        opacity={highlighted ? (isWeak ? 0.45 : 0.78) : 0.16}
+        strokeWidth={highlighted ? (isWeak ? 1.8 : 3.2) : 1.4}
+        opacity={highlighted ? (isWeak ? 0.45 : 0.86) : 0.18}
         markerEnd={highlighted && !isWeak ? "url(#semi-arrow-v23)" : undefined}
       />
     </g>
