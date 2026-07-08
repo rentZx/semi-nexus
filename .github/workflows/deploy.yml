@@ -1,0 +1,79 @@
+name: Deploy SemiNexus
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: seminexus-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+
+    env:
+      DEPLOY_PORT: ${{ secrets.SERVER_PORT || '22' }}
+      SERVER_HOST: ${{ secrets.SERVER_HOST }}
+      SERVER_USER: ${{ secrets.SERVER_USER }}
+      SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      SERVER_DEPLOY_PATH: ${{ secrets.SERVER_DEPLOY_PATH }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Validate deployment secrets
+        run: |
+          test -n "$SERVER_HOST"
+          test -n "$SERVER_USER"
+          test -n "$SERVER_SSH_KEY"
+          test -n "$SERVER_DEPLOY_PATH"
+
+      - name: Pack dist
+        run: tar -czf seminexus-dist.tar.gz -C dist .
+
+      - name: Prepare SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SERVER_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$DEPLOY_PORT" "$SERVER_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload artifact to server
+        run: |
+          scp -i ~/.ssh/deploy_key -P "$DEPLOY_PORT" seminexus-dist.tar.gz \
+            "$SERVER_USER@$SERVER_HOST:/tmp/seminexus-dist.tar.gz"
+
+      - name: Release on server
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$SERVER_USER@$SERVER_HOST" "DEPLOY_PATH='$SERVER_DEPLOY_PATH' bash -s" << 'EOF'
+          set -euo pipefail
+
+          RELEASE_DIR="$DEPLOY_PATH/releases/$(date +%Y%m%d%H%M%S)"
+
+          mkdir -p "$RELEASE_DIR"
+          tar -xzf /tmp/seminexus-dist.tar.gz -C "$RELEASE_DIR"
+          ln -sfn "$RELEASE_DIR" "$DEPLOY_PATH/current"
+          rm -f /tmp/seminexus-dist.tar.gz
+
+          if command -v nginx >/dev/null 2>&1; then
+            sudo nginx -t
+            sudo systemctl reload nginx
+          fi
+          EOF
