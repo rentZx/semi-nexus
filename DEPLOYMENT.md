@@ -7,9 +7,9 @@ This project is a Vite static frontend. The GitHub Actions workflow in `.github/
 - **Server**: 49.233.197.213 (Tencent Cloud CVM, Ubuntu 24.04)
 - **URL**: http://49.233.197.213:3002
 - **Nginx config**: `/etc/nginx/sites-available/semi-nexus` (port 3002)
-- **Deploy root**: `/var/www/semi-nexus`
-- **Current symlink**: `/var/www/semi-nexus/current` → latest release
-- **Releases**: `/var/www/semi-nexus/releases/<timestamp>`
+- **Deploy root**: `/opt/apps/semi-nexus`
+- **Current symlink**: `/opt/apps/semi-nexus/current` → latest release
+- **Releases**: `/opt/apps/semi-nexus/releases/<timestamp>`
 
 ## GitHub Secrets
 
@@ -21,20 +21,20 @@ Secrets configured in `rentZx/semi-nexus`:
 | `SERVER_USER` | `ubuntu` |
 | `SERVER_PORT` | `22` |
 | `SERVER_SSH_KEY` | ed25519 private key (`github_actions_seminexus`) |
-| `SERVER_DEPLOY_PATH` | `/var/www/semi-nexus` |
+| `SERVER_DEPLOY_PATH` | `/opt/apps/semi-nexus` |
 
 ## Server Directory
 
 Each release is published under:
 
 ```text
-/var/www/semi-nexus/releases/<timestamp>
+/opt/apps/semi-nexus/releases/<timestamp>
 ```
 
 and the `current` symlink is updated:
 
 ```text
-/var/www/semi-nexus/current → /var/www/semi-nexus/releases/<latest>
+/opt/apps/semi-nexus/current → /opt/apps/semi-nexus/releases/<latest>
 ```
 
 ## Nginx Config
@@ -44,7 +44,7 @@ server {
     listen 3002;
     server_name _;
 
-    root /var/www/semi-nexus/current;
+    root /opt/apps/semi-nexus/current;
     index index.html;
 
     location / {
