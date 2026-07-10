@@ -69,8 +69,8 @@ export function AiComputingPage() {
         })}
       </div>
 
-      {/* SVG Map + floating panel */}
-      <div className="relative min-w-0">
+      {/* Map + Side Panel — grid layout, no overlap */}
+      <div className={`grid min-w-0 gap-4 ${detailOpen ? 'grid-cols-[1fr_380px]' : 'grid-cols-1'} transition-[grid-template-columns] duration-300`}>
         <AiLandscapeMap
           activeId={activeNodeId}
           lockedId={lockedNodeId}
@@ -84,34 +84,20 @@ export function AiComputingPage() {
           }}
         />
 
-        {/* Floating detail panel */}
-        <div className="absolute right-0 top-0 z-20 w-[min(380px,calc(100vw-1.5rem))] p-3">
-          {detailOpen ? (
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setDetailOpen(false)}
-                className="absolute -right-2 -top-2 z-10 grid h-8 w-8 place-items-center rounded-full border border-line bg-card text-muted shadow-sm transition hover:bg-card-hover hover:text-body"
-                aria-label="关闭详情"
-              >
-                <X className="h-4 w-4" />
-              </button>
-              <AiHoverPanel node={selectedNode} locked={Boolean(lockedNodeId)} />
-            </div>
-          ) : (
-            !lockedNodeId && activeNodeId && (
-              <div className="absolute right-3 top-3 z-20">
-                <button
-                  type="button"
-                  onClick={() => setDetailOpen(true)}
-                  className="surface rounded-xl px-4 py-2.5 text-sm font-medium text-accent shadow-sm transition hover:shadow-md"
-                >
-                  查看详情 →
-                </button>
-              </div>
-            )
-          )}
-        </div>
+        {/* Side panel — takes its own column, never overlaps the map */}
+        {detailOpen && (
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setDetailOpen(false)}
+              className="absolute right-0 top-0 z-10 grid h-8 w-8 place-items-center rounded-full border border-line bg-card text-muted shadow-sm transition hover:bg-card-hover hover:text-body"
+              aria-label="关闭详情"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <AiHoverPanel node={selectedNode} locked={Boolean(lockedNodeId)} />
+          </div>
+        )}
       </div>
 
       <div className="mt-6">
