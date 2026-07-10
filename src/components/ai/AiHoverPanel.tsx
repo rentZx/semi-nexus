@@ -25,31 +25,54 @@ export function AiHoverPanel({ node, locked }: AiHoverPanelProps) {
   const view = node ?? overview;
 
   return (
-    <aside className="glass max-h-[calc(100dvh-10rem)] min-w-0 overflow-y-auto rounded-[1.75rem] p-5 shadow-2xl">
-      <div className="flex items-center justify-between gap-3 pr-7">
-        <p className="truncate text-sm font-semibold text-accent">{view.category}</p>
-        <Badge tone={locked ? "amber" : "cyan"}>{locked ? "已锁定" : node ? "节点详情" : "总览"}</Badge>
+    <aside className="surface max-h-[calc(100dvh-10rem)] min-w-0 overflow-y-auto rounded-[1.5rem] p-5 shadow-lg">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-3">
+        <p className="truncate text-xs font-semibold uppercase tracking-[0.12em] text-muted">{view.category}</p>
+        <Badge tone={locked ? "amber" : "accent"}>{locked ? "已锁定" : node ? "节点详情" : "总览"}</Badge>
       </div>
-      <h2 className="mt-3 text-2xl font-semibold text-heading">{view.label}</h2>
-      <p className="mt-4 text-sm leading-7 text-body">{view.summary}</p>
+      <h2 className="mt-2 text-xl font-semibold text-heading">{view.label}</h2>
+      <p className="mt-3 text-sm leading-7 text-body">{view.summary}</p>
 
-      <PanelBlock icon={<Cpu className="h-4 w-4" />} title="为什么重要">
+      {/* Why important */}
+      <section className="mt-5 rounded-xl bg-card-hover p-4">
+        <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-heading">
+          <span className="text-accent"><Cpu className="h-4 w-4" /></span>
+          为什么重要
+        </h3>
         <p className="text-sm leading-7 text-body">{view.whyImportant}</p>
-      </PanelBlock>
+      </section>
 
-      <PanelBlock icon={<LinkIcon className="h-4 w-4" />} title="强相关节点">
+      {/* Related nodes */}
+      <section className="mt-4">
+        <h3 className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-heading">
+          <span className="text-accent"><LinkIcon className="h-4 w-4" /></span>
+          强相关节点
+        </h3>
         <div className="flex flex-wrap gap-2">
           {view.relatedNodes.map((item) => (
             <Badge key={item} tone="blue">{item}</Badge>
           ))}
         </div>
-      </PanelBlock>
+      </section>
 
-      <PanelBlock icon={<ArrowRight className="h-4 w-4" />} title="需求传导">
-        <p className="rounded-2xl border border-accent/15 bg-card-hover p-3 text-sm leading-7 text-body">{view.benefitLogic}</p>
-      </PanelBlock>
+      {/* Benefit logic */}
+      <section className="mt-4">
+        <h3 className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-heading">
+          <span className="text-accent"><ArrowRight className="h-4 w-4" /></span>
+          需求传导
+        </h3>
+        <p className="rounded-xl border border-line bg-card-hover p-3 text-sm leading-7 text-body">
+          {view.benefitLogic}
+        </p>
+      </section>
 
-      <PanelBlock icon={<Building2 className="h-4 w-4" />} title="相关公司">
+      {/* Related companies */}
+      <section className="mt-4">
+        <h3 className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-heading">
+          <span className="text-accent"><Building2 className="h-4 w-4" /></span>
+          相关公司
+        </h3>
         {view.relatedCompanies.length ? (
           <div className="grid gap-2">
             {view.relatedCompanies.slice(0, 4).map((company) =>
@@ -57,30 +80,37 @@ export function AiHoverPanel({ node, locked }: AiHoverPanelProps) {
                 <Link
                   key={`${company.name}-${company.code}`}
                   to={`/companies/${company.code}`}
-                  className="rounded-2xl border border-accent/15 bg-card-hover px-3 py-2 text-sm text-body transition hover:border-cyan-300/45 hover:bg-accent-soft"
+                  className="flex items-center justify-between rounded-xl border border-line bg-card-hover px-3 py-2.5 text-sm transition hover:border-accent/40 hover:bg-accent-soft"
                 >
-                  {company.name} <span className="text-heading0">{company.code}</span>
+                  <span className="text-body">{company.name}</span>
+                  <span className="text-xs font-mono text-muted">{company.code}</span>
                 </Link>
               ) : (
-                <span key={company.name} className="rounded-2xl border border-accent/15 bg-card-hover px-3 py-2 text-sm text-body">
+                <span key={company.name} className="rounded-xl border border-line bg-card-hover px-3 py-2.5 text-sm text-body">
                   {company.name}
                 </span>
               )
             )}
           </div>
         ) : (
-          <p className="text-sm leading-6 text-muted">该节点更偏产业环节或基础设施，暂不展开公司映射。</p>
+          <p className="text-sm text-muted">该节点更偏产业环节或基础设施，暂不展开公司映射。</p>
         )}
-      </PanelBlock>
+      </section>
 
-      <PanelBlock icon={<ShieldAlert className="h-4 w-4" />} title="观察风险">
+      {/* Risks */}
+      <section className="mt-4">
+        <h3 className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-heading">
+          <span className="text-amber"><ShieldAlert className="h-4 w-4" /></span>
+          观察风险
+        </h3>
         <div className="flex flex-wrap gap-2">
           {view.risks.map((risk) => (
             <Badge key={risk} tone="amber">{risk}</Badge>
           ))}
         </div>
-      </PanelBlock>
+      </section>
 
+      {/* Related terms */}
       <div className="mt-5 flex flex-wrap gap-2">
         {view.relatedTerms.map((term) => (
           <Link key={term} to={`/glossary?term=${encodeURIComponent(term)}`}>
@@ -89,6 +119,7 @@ export function AiHoverPanel({ node, locked }: AiHoverPanelProps) {
         ))}
       </div>
 
+      {/* View detail button */}
       {node?.segmentId ? (
         <div className="mt-5">
           <Button to={`/segments/${node.segmentId}`} icon={<ArrowRight className="h-4 w-4" />}>
@@ -97,17 +128,5 @@ export function AiHoverPanel({ node, locked }: AiHoverPanelProps) {
         </div>
       ) : null}
     </aside>
-  );
-}
-
-function PanelBlock({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
-  return (
-    <section className="mt-5">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-heading">
-        <span className="text-accent">{icon}</span>
-        {title}
-      </h3>
-      {children}
-    </section>
   );
 }

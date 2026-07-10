@@ -1,53 +1,75 @@
 import { useState } from "react";
-import { X } from "lucide-react";
+import { Cpu, Network, Thermometer, X } from "lucide-react";
 import { Disclaimer } from "../components/Disclaimer";
 import { AiHoverPanel } from "../components/ai/AiHoverPanel";
 import { AiLandscapeMap } from "../components/ai/AiLandscapeMap";
 import { PageHeader } from "../components/PageHeader";
-import { Badge } from "../components/ui/Badge";
 import { getAiLandscapeNode } from "../data/aiLandscape";
 
 const focusPaths = [
   {
     title: "核心算力链",
-    path: "AI芯片 -> HBM -> 先进封装 -> IC载板/ABF -> PCB/高速板 -> AI服务器 -> 数据中心",
-    tone: "cyan" as const,
+    desc: "AI芯片 → HBM → 先进封装 → IC载板/ABF → PCB/高速板 → AI服务器 → 数据中心",
+    icon: Cpu,
+    color: "accent" as const,
   },
   {
     title: "光通信链",
-    path: "AI服务器 -> 光模块/CPO -> 数据中心互联 -> 数据中心",
-    tone: "violet" as const,
+    desc: "AI服务器 → 光模块/CPO → 数据中心互联 → 数据中心",
+    icon: Network,
+    color: "violet" as const,
   },
   {
     title: "散热电源链",
-    path: "AI服务器 -> 液冷散热 -> 服务器电源 -> 功率器件",
-    tone: "amber" as const,
+    desc: "AI服务器 → 液冷散热 → 服务器电源 → 功率器件",
+    icon: Thermometer,
+    color: "amber" as const,
   },
 ];
+
+const colorMap = {
+  accent: { border: "border-l-accent", bg: "bg-accent-soft", text: "text-accent" },
+  violet: { border: "border-l-violet", bg: "bg-violet-soft", text: "text-violet" },
+  amber: { border: "border-l-amber", bg: "bg-amber-soft", text: "text-amber" },
+};
 
 export function AiComputingPage() {
   const [activeNodeId, setActiveNodeId] = useState<string | null>("ai-server");
   const [lockedNodeId, setLockedNodeId] = useState<string | null>(null);
-  const [detailOpen, setDetailOpen] = useState(true);
+  const [detailOpen, setDetailOpen] = useState(false);
   const selectedNode = getAiLandscapeNode(lockedNodeId ?? activeNodeId) ?? null;
 
   return (
-    <div className="min-w-0 overflow-x-hidden">
+    <div className="page-enter min-w-0 overflow-x-hidden">
       <PageHeader
         eyebrow="AI 产业链核心图"
         title="三条链看懂 AI 算力基础设施"
-        description="默认只展示核心算力链、光通信链和散热电源链，hover 节点时只高亮相关链路，详细解释放在悬浮面板。"
+        description="hover 节点高亮相关链路，点击锁定查看详情。每条链代表算力从芯片到数据中心的完整传导路径。"
       />
 
-      <div className="mb-6 grid min-w-0 gap-4 md:grid-cols-3">
-        {focusPaths.map((item) => (
-          <section key={item.title} className="surface rounded-2xl p-5">
-            <Badge tone={item.tone}>{item.title}</Badge>
-            <p className="mt-3 text-sm leading-7 text-body">{item.path}</p>
-          </section>
-        ))}
+      {/* Three chain cards */}
+      <div className="mb-6 grid gap-4 md:grid-cols-3">
+        {focusPaths.map((item) => {
+          const Icon = item.icon;
+          const c = colorMap[item.color];
+          return (
+            <section
+              key={item.title}
+              className={`surface rounded-2xl border-l-[3px] ${c.border} overflow-hidden`}
+            >
+              <div className="flex items-center gap-3 p-5 pb-3">
+                <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${c.bg} ${c.text}`}>
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="text-sm font-semibold text-heading">{item.title}</h3>
+              </div>
+              <p className="px-5 pb-4 text-sm leading-7 text-body">{item.desc}</p>
+            </section>
+          );
+        })}
       </div>
 
+      {/* SVG Map + floating panel */}
       <div className="relative min-w-0">
         <AiLandscapeMap
           activeId={activeNodeId}
@@ -61,27 +83,35 @@ export function AiComputingPage() {
             if (id) setDetailOpen(true);
           }}
         />
-        {detailOpen ? (
-          <div className="absolute right-4 top-4 z-20 w-[min(390px,calc(100vw-2rem))]">
-            <button
-              type="button"
-              onClick={() => setDetailOpen(false)}
-              className="absolute -right-2 -top-2 z-10 grid h-9 w-9 place-items-center rounded-full border border-accent/20 bg-card text-body shadow-lg"
-              aria-label="关闭详情"
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <AiHoverPanel node={selectedNode} locked={Boolean(lockedNodeId)} />
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setDetailOpen(true)}
-            className="absolute right-4 top-4 z-20 rounded-2xl border border-accent/20 bg-slate-950/78 px-4 py-3 text-sm font-semibold text-accent shadow-xl backdrop-blur-xl"
-          >
-            打开详情
-          </button>
-        )}
+
+        {/* Floating detail panel */}
+        <div className="absolute right-0 top-0 z-20 w-[min(380px,calc(100vw-1.5rem))] p-3">
+          {detailOpen ? (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setDetailOpen(false)}
+                className="absolute -right-2 -top-2 z-10 grid h-8 w-8 place-items-center rounded-full border border-line bg-card text-muted shadow-sm transition hover:bg-card-hover hover:text-body"
+                aria-label="关闭详情"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <AiHoverPanel node={selectedNode} locked={Boolean(lockedNodeId)} />
+            </div>
+          ) : (
+            !lockedNodeId && activeNodeId && (
+              <div className="absolute right-3 top-3 z-20">
+                <button
+                  type="button"
+                  onClick={() => setDetailOpen(true)}
+                  className="surface rounded-xl px-4 py-2.5 text-sm font-medium text-accent shadow-sm transition hover:shadow-md"
+                >
+                  查看详情 →
+                </button>
+              </div>
+            )
+          )}
+        </div>
       </div>
 
       <div className="mt-6">
