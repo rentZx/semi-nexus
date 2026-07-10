@@ -33,14 +33,14 @@ export function CompanyDetailPage() {
           <List title="风险提示" items={company.risks} />
         </GlassCard>
         <GlassCard>
-          <h2 className="text-xl font-semibold text-slate-50">它不是做什么？</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-300">这个模块用于防止把公司概念误读成其它产业链环节。</p>
+          <h2 className="text-xl font-semibold text-heading">它不是做什么？</h2>
+          <p className="mt-2 text-sm leading-6 text-body">这个模块用于防止把公司概念误读成其它产业链环节。</p>
           <div className="mt-4 space-y-2">
             {company.notThis.map((item) => (
-              <div key={item} className="rounded-2xl border border-amber-300/20 bg-amber-400/10 px-4 py-3 text-sm text-amber-100">{item}</div>
+              <div key={item} className="rounded-2xl border border-amber/20 bg-amber-soft px-4 py-3 text-sm text-amber">{item}</div>
             ))}
           </div>
-          <p className="mt-6 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-sm leading-7 text-cyan-100">{company.note}</p>
+          <p className="mt-6 rounded-2xl border border-accent/20 bg-accent-soft p-4 text-sm leading-7 text-accent">{company.note}</p>
         </GlassCard>
       </div>
     </div>
@@ -50,7 +50,7 @@ export function CompanyDetailPage() {
 function List({ title, items }: { title: string; items: string[] }) {
   return (
     <section className="mb-7">
-      <h2 className="text-lg font-semibold text-slate-50">{title}</h2>
+      <h2 className="text-lg font-semibold text-heading">{title}</h2>
       <div className="mt-3 flex flex-wrap gap-2">{items.map((item) => <Badge key={item}>{item}</Badge>)}</div>
     </section>
   );

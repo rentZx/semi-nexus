@@ -26,10 +26,10 @@ export function ProcessPage() {
                 onClick={() => setSelectedId(step.id)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left transition",
-                  selectedId === step.id ? "bg-cyan-300/16 text-cyan-100 ring-1 ring-cyan-300/35" : "bg-slate-950/42 text-slate-300 hover:bg-cyan-300/8"
+                  selectedId === step.id ? "bg-accent-soft text-accent ring-1 ring-accent/20" : "bg-card-hover text-body hover:bg-accent-soft"
                 )}
               >
-                <span className={cn("grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-semibold", selectedId === step.id ? "bg-cyan-300 text-slate-950" : "bg-slate-800 text-slate-300")}>
+                <span className={cn("grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-semibold", selectedId === step.id ? "bg-accent text-heading" : "bg-line-strong text-body")}>
                   {step.order}
                 </span>
                 <span className="text-sm font-medium">{step.title}</span>
@@ -38,10 +38,10 @@ export function ProcessPage() {
           </div>
         </GlassCard>
         <GlassCard className="p-7">
-          <p className="text-sm font-semibold text-cyan-300">第 {selected.order} 步</p>
-          <h2 className="mt-2 text-3xl font-semibold text-slate-50">{selected.title}</h2>
-          <p className="mt-4 text-base leading-8 text-slate-300">{selected.plainExplanation}</p>
-          <p className="mt-4 rounded-2xl border border-cyan-300/15 bg-slate-950/42 p-4 text-sm leading-7 text-slate-300">{selected.technicalExplanation}</p>
+          <p className="text-sm font-semibold text-accent">第 {selected.order} 步</p>
+          <h2 className="mt-2 text-3xl font-semibold text-heading">{selected.title}</h2>
+          <p className="mt-4 text-base leading-8 text-body">{selected.plainExplanation}</p>
+          <p className="mt-4 rounded-2xl border border-accent/20 bg-card-hover p-4 text-sm leading-7 text-body">{selected.technicalExplanation}</p>
           <Detail title="涉及设备" items={selected.relatedEquipment} />
           <Detail title="涉及材料" items={selected.relatedMaterials} />
           <Detail title="为什么难" items={selected.difficulty} />
@@ -55,7 +55,7 @@ export function ProcessPage() {
 function Detail({ title, items }: { title: string; items: string[] }) {
   return (
     <div className="mt-6">
-      <h3 className="mb-3 text-sm font-semibold text-slate-100">{title}</h3>
+      <h3 className="mb-3 text-sm font-semibold text-heading">{title}</h3>
       <div className="flex flex-wrap gap-2">{items.map((item) => <Badge key={item}>{item}</Badge>)}</div>
     </div>
   );

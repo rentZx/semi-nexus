@@ -31,19 +31,19 @@ export function SegmentDetailPage() {
           <List title="风险因素" items={segment.riskFactors} />
         </GlassCard>
         <GlassCard>
-          <h2 className="text-lg font-semibold text-slate-50">关联跳转</h2>
+          <h2 className="text-lg font-semibold text-heading">关联跳转</h2>
           <div className="mt-4">
-            <p className="mb-2 text-sm font-semibold text-slate-200">相关术语</p>
+            <p className="mb-2 text-sm font-semibold text-body">相关术语</p>
             <div className="flex flex-wrap gap-2">{segment.relatedTerms.map((term) => <Badge key={term} tone="blue">{term}</Badge>)}</div>
           </div>
           <div className="mt-6">
-            <p className="mb-2 text-sm font-semibold text-slate-200">代表公司</p>
+            <p className="mb-2 text-sm font-semibold text-body">代表公司</p>
             <div className="space-y-2">
               {segment.exampleCompanies.length ? segment.exampleCompanies.map((company) => (
-                <Link key={company.code} to={`/companies/${company.code}`} className="block rounded-2xl bg-slate-950/48 px-4 py-3 text-sm font-medium text-slate-200 ring-1 ring-cyan-300/20">
-                  {company.name} <span className="text-slate-500">{company.code}</span>
+                <Link key={company.code} to={`/companies/${company.code}`} className="block rounded-2xl bg-card-hover px-4 py-3 text-sm font-medium text-body ring-1 ring-accent/20">
+                  {company.name} <span className="text-heading0">{company.code}</span>
                 </Link>
-              )) : <p className="text-sm text-slate-400">暂无首批公司示例</p>}
+              )) : <p className="text-sm text-muted">暂无首批公司示例</p>}
             </div>
           </div>
         </GlassCard>
@@ -55,8 +55,8 @@ export function SegmentDetailPage() {
 function Section({ title, text }: { title: string; text: string }) {
   return (
     <section className="mb-7">
-      <h2 className="text-xl font-semibold text-slate-50">{title}</h2>
-      <p className="mt-3 text-base leading-8 text-slate-300">{text}</p>
+      <h2 className="text-xl font-semibold text-heading">{title}</h2>
+      <p className="mt-3 text-base leading-8 text-body">{text}</p>
     </section>
   );
 }
@@ -64,7 +64,7 @@ function Section({ title, text }: { title: string; text: string }) {
 function List({ title, items }: { title: string; items: string[] }) {
   return (
     <section className="mb-7">
-      <h2 className="text-lg font-semibold text-slate-50">{title}</h2>
+      <h2 className="text-lg font-semibold text-heading">{title}</h2>
       <div className="mt-3 flex flex-wrap gap-2">{items.map((item) => <Badge key={item}>{item}</Badge>)}</div>
     </section>
   );

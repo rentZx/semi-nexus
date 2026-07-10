@@ -70,7 +70,7 @@ export function SemiconductorHeroMap({ activeId, lockedId, onActiveChange, onLoc
   }
 
   return (
-    <div className="glass hud-grid h-full min-h-0 min-w-0 overflow-hidden rounded-[2rem] p-4 sm:p-5" onClick={handleCanvasClick}>
+    <div className="surface h-full min-h-0 min-w-0 overflow-hidden rounded-[2rem] p-4 sm:p-5" onClick={handleCanvasClick}>
       <svg
         viewBox="0 0 1500 720"
         preserveAspectRatio="xMidYMid meet"
@@ -227,10 +227,10 @@ function HoverTooltip({ node }: { node: ChainOverviewNode }) {
 
   return (
     <foreignObject x={tooltipX} y={tooltipY} width="300" height="150" className="pointer-events-none">
-      <div className="rounded-2xl border border-cyan-300/20 bg-slate-950/88 p-4 shadow-2xl backdrop-blur-xl">
-        <p className="text-sm font-semibold text-cyan-200">{node.label}</p>
-        <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-300">{node.summary}</p>
-        <p className="mt-3 text-xs font-semibold text-cyan-300">点击查看详情</p>
+      <div className="rounded-2xl border border-accent/20 bg-card p-4 shadow-2xl backdrop-blur-xl">
+        <p className="text-sm font-semibold text-accent">{node.label}</p>
+        <p className="mt-2 line-clamp-2 text-xs leading-5 text-body">{node.summary}</p>
+        <p className="mt-3 text-xs font-semibold text-accent">点击查看详情</p>
       </div>
     </foreignObject>
   );

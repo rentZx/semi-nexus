@@ -8,23 +8,27 @@ type ButtonProps = {
   variant?: "primary" | "secondary" | "ghost";
   icon?: React.ReactNode;
   type?: "button" | "submit";
+  className?: string;
 };
+
+const base =
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
 const variants = {
-  primary: "bg-cyan-300 text-slate-950 shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:bg-cyan-200",
-  secondary: "bg-slate-900/76 text-slate-100 ring-1 ring-cyan-300/25 hover:bg-slate-800/90 hover:ring-cyan-300/55",
-  ghost: "bg-transparent text-cyan-100 hover:bg-cyan-300/10",
+  primary:
+    "bg-accent text-accent-contrast hover:bg-accent-hover hover:shadow-card-hover focus-visible:outline-accent",
+  secondary:
+    "bg-card text-heading border border-line hover:border-line-strong hover:bg-card-hover focus-visible:outline-accent",
+  ghost:
+    "bg-transparent text-accent hover:bg-accent-soft focus-visible:outline-accent",
 };
 
-export function Button({ children, to, onClick, variant = "primary", icon, type = "button" }: ButtonProps) {
-  const className = cn(
-    "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5",
-    variants[variant]
-  );
+export function Button({ children, to, onClick, variant = "primary", icon, type = "button", className }: ButtonProps) {
+  const classes = cn(base, variants[variant], className);
 
   if (to) {
     return (
-      <Link to={to} className={className}>
+      <Link to={to} className={classes}>
         {icon}
         {children}
       </Link>
@@ -32,7 +36,7 @@ export function Button({ children, to, onClick, variant = "primary", icon, type 
   }
 
   return (
-    <button type={type} onClick={onClick} className={className}>
+    <button type={type} onClick={onClick} className={classes}>
       {icon}
       {children}
     </button>

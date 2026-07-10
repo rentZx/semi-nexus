@@ -34,10 +34,10 @@ export function SegmentsPage() {
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {filtered.map((segment) => (
-          <Link key={segment.id} to={`/segments/${segment.id}`} className="soft-card rounded-3xl p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
-            <p className="text-sm font-semibold text-cyan-300">{segment.category} {segment.parent ? `/ ${segment.parent}` : ""}</p>
-            <h2 className="mt-2 text-xl font-semibold text-slate-50">{segment.name}</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-300">{segment.summary}</p>
+          <Link key={segment.id} to={`/segments/${segment.id}`} className="surface-interactive p-5">
+            <p className="text-sm font-semibold text-accent">{segment.category} {segment.parent ? `/ ${segment.parent}` : ""}</p>
+            <h2 className="mt-2 text-xl font-semibold text-heading">{segment.name}</h2>
+            <p className="mt-3 text-sm leading-6 text-body">{segment.summary}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {segment.demandDrivers.slice(0, 3).map((driver) => <Badge key={driver}>{driver}</Badge>)}
             </div>

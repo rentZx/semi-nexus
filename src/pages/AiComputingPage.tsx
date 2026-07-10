@@ -41,9 +41,9 @@ export function AiComputingPage() {
 
       <div className="mb-6 grid min-w-0 gap-4 md:grid-cols-3">
         {focusPaths.map((item) => (
-          <section key={item.title} className="soft-card rounded-2xl p-5">
+          <section key={item.title} className="surface rounded-2xl p-5">
             <Badge tone={item.tone}>{item.title}</Badge>
-            <p className="mt-3 text-sm leading-7 text-slate-300">{item.path}</p>
+            <p className="mt-3 text-sm leading-7 text-body">{item.path}</p>
           </section>
         ))}
       </div>
@@ -66,7 +66,7 @@ export function AiComputingPage() {
             <button
               type="button"
               onClick={() => setDetailOpen(false)}
-              className="absolute -right-2 -top-2 z-10 grid h-9 w-9 place-items-center rounded-full border border-cyan-300/20 bg-slate-950/90 text-slate-200 shadow-lg"
+              className="absolute -right-2 -top-2 z-10 grid h-9 w-9 place-items-center rounded-full border border-accent/20 bg-card text-body shadow-lg"
               aria-label="关闭详情"
             >
               <X className="h-4 w-4" />
@@ -77,7 +77,7 @@ export function AiComputingPage() {
           <button
             type="button"
             onClick={() => setDetailOpen(true)}
-            className="absolute right-4 top-4 z-20 rounded-2xl border border-cyan-300/20 bg-slate-950/78 px-4 py-3 text-sm font-semibold text-cyan-100 shadow-xl backdrop-blur-xl"
+            className="absolute right-4 top-4 z-20 rounded-2xl border border-accent/20 bg-slate-950/78 px-4 py-3 text-sm font-semibold text-accent shadow-xl backdrop-blur-xl"
           >
             打开详情
           </button>

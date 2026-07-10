@@ -27,11 +27,11 @@ export function SemiconductorHoverPanel({ node, locked }: SemiconductorHoverPane
   return (
     <aside className="glass max-h-[calc(100dvh-8rem)] min-w-0 overflow-y-auto rounded-[1.75rem] p-4 shadow-2xl sm:p-5">
       <div className="flex items-center justify-between gap-3 pr-7">
-        <p className="truncate text-sm font-semibold text-cyan-300">{view.locationLabel}</p>
+        <p className="truncate text-sm font-semibold text-accent">{view.locationLabel}</p>
         <Badge tone={locked ? "amber" : "cyan"}>{locked ? "已锁定" : node ? "节点详情" : "总览"}</Badge>
       </div>
-      <h2 className="mt-3 text-2xl font-semibold text-slate-50">{view.label}</h2>
-      <p className="mt-4 text-sm leading-7 text-slate-300">{view.summary}</p>
+      <h2 className="mt-3 text-2xl font-semibold text-heading">{view.label}</h2>
+      <p className="mt-4 text-sm leading-7 text-body">{view.summary}</p>
 
       <PanelSection icon={<Layers3 className="h-4 w-4" />} title="细分方向">
         <div className="flex flex-wrap gap-2">
@@ -45,9 +45,9 @@ export function SemiconductorHoverPanel({ node, locked }: SemiconductorHoverPane
         <PanelSection icon={<ArrowRight className="h-4 w-4" />} title="对应关系">
           <div className="grid gap-2">
             {view.childNodes.map((child) => (
-              <div key={child.label} className="rounded-2xl border border-cyan-300/12 bg-slate-950/34 px-3 py-2 text-sm leading-6 text-slate-300">
-                <span className="font-semibold text-slate-100">{child.label}</span>
-                {child.targets.length ? <span className="text-slate-400"> {"->"} {child.targets.map(formatTarget).join(" / ")}</span> : null}
+              <div key={child.label} className="rounded-2xl border border-accent/15 bg-card-hover px-3 py-2 text-sm leading-6 text-body">
+                <span className="font-semibold text-heading">{child.label}</span>
+                {child.targets.length ? <span className="text-muted"> {"->"} {child.targets.map(formatTarget).join(" / ")}</span> : null}
               </div>
             ))}
           </div>
@@ -57,7 +57,7 @@ export function SemiconductorHoverPanel({ node, locked }: SemiconductorHoverPane
       <PanelSection icon={<Cpu className="h-4 w-4" />} title="关键壁垒">
         <div className="grid gap-2">
           {view.barriers.slice(0, 4).map((item) => (
-            <div key={item} className="rounded-2xl border border-cyan-300/12 bg-slate-950/34 px-3 py-2 text-sm text-slate-300">
+            <div key={item} className="rounded-2xl border border-accent/15 bg-card-hover px-3 py-2 text-sm text-body">
               {item}
             </div>
           ))}
@@ -80,19 +80,19 @@ export function SemiconductorHoverPanel({ node, locked }: SemiconductorHoverPane
                 <Link
                   key={`${company.name}-${company.code}`}
                   to={`/companies/${company.code}`}
-                  className="rounded-2xl border border-cyan-300/12 bg-slate-950/34 px-3 py-2 text-sm text-slate-200 transition hover:border-cyan-300/45 hover:bg-cyan-300/10"
+                  className="rounded-2xl border border-accent/15 bg-card-hover px-3 py-2 text-sm text-body transition hover:border-cyan-300/45 hover:bg-accent-soft"
                 >
-                  {company.name} <span className="text-slate-500">{company.code}</span>
+                  {company.name} <span className="text-heading0">{company.code}</span>
                 </Link>
               ) : (
-                <span key={company.name} className="rounded-2xl border border-cyan-300/12 bg-slate-950/34 px-3 py-2 text-sm text-slate-200">
+                <span key={company.name} className="rounded-2xl border border-accent/15 bg-card-hover px-3 py-2 text-sm text-body">
                   {company.name}
                 </span>
               )
             )}
           </div>
         ) : (
-          <p className="text-sm leading-6 text-slate-400">移动鼠标到主节点查看细分方向；手机端点击节点查看。</p>
+          <p className="text-sm leading-6 text-muted">移动鼠标到主节点查看细分方向；手机端点击节点查看。</p>
         )}
       </PanelSection>
 
@@ -114,8 +114,8 @@ export function SemiconductorHoverPanel({ node, locked }: SemiconductorHoverPane
 function PanelSection({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
     <section className="mt-5">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-100">
-        <span className="text-cyan-300">{icon}</span>
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-heading">
+        <span className="text-accent">{icon}</span>
         {title}
       </h3>
       {children}

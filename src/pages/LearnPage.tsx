@@ -23,14 +23,14 @@ export function LearnPage() {
       <div className="grid gap-5 lg:grid-cols-2">
         {routes.map((route) => (
           <GlassCard key={route.id}>
-            <h2 className="text-xl font-semibold text-slate-50">{route.title}</h2>
+            <h2 className="text-xl font-semibold text-heading">{route.title}</h2>
             <div className="mt-5 space-y-3">
               {route.steps.map((step, index) => {
                 const id = `${route.id}-${index}`;
                 const done = completed.includes(id);
                 return (
-                  <button key={id} type="button" onClick={() => toggle(id)} className={cn("flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition", done ? "bg-cyan-300/14 text-cyan-100 ring-1 ring-cyan-300/35" : "bg-slate-950/45 text-slate-300 ring-1 ring-cyan-300/15 hover:bg-cyan-300/8")}>
-                    <CheckCircle2 className={cn("h-5 w-5", done ? "text-cyan-300" : "text-slate-600")} />
+                  <button key={id} type="button" onClick={() => toggle(id)} className={cn("flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition", done ? "bg-accent-soft text-accent ring-1 ring-accent/20" : "bg-card-hover text-body ring-1 ring-accent/15 hover:bg-accent-soft")}>
+                    <CheckCircle2 className={cn("h-5 w-5", done ? "text-accent" : "text-muted")} />
                     <span className="font-medium">{step}</span>
                   </button>
                 );

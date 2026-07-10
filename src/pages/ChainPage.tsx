@@ -17,10 +17,10 @@ export function ChainPage() {
   return (
     <div className="min-w-0 overflow-x-hidden">
       <header className="mb-8 max-w-5xl">
-        <p className="mb-3 text-sm font-semibold text-cyan-300">产业链交互地图</p>
-        <h1 className="text-4xl font-semibold tracking-normal text-slate-50 sm:text-[42px]">一张图看清上游支撑、中游核心和下游应用</h1>
-        <p className="mt-4 max-w-4xl text-base leading-8 text-slate-300">
-          点击节点查看通俗解释、核心壁垒、需求驱动、代表公司、观察指标和风险提示。三栏内容已放大并支持自动换行。
+        <p className="mb-3 text-sm font-semibold text-accent">产业链交互地图</p>
+        <h1 className="text-4xl font-semibold tracking-tight text-heading sm:text-[42px]">一张图看清上游支撑、中游核心和下游应用</h1>
+        <p className="mt-4 max-w-4xl text-base leading-8 text-body">
+          点击节点查看通俗解释、核心壁垒、需求驱动、代表公司、观察指标和风险提示。
         </p>
       </header>
 
@@ -29,7 +29,7 @@ export function ChainPage() {
       </div>
 
       <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_370px]">
-        <GlassCard className="hud-grid min-w-0 overflow-hidden p-5">
+        <GlassCard className="min-w-0 overflow-hidden p-5">
           <div className="grid min-h-[640px] min-w-0 gap-5 lg:grid-cols-3">
             {chainGroups.map((group) => {
               const groupSegments = filtered
@@ -40,9 +40,9 @@ export function ChainPage() {
                 .slice(0, 7);
 
               return (
-                <section key={group.title} className="min-w-0 rounded-[1.65rem] border border-cyan-300/18 bg-slate-950/42 p-5">
-                  <h2 className="text-[28px] font-semibold leading-tight text-slate-50">{group.title}</h2>
-                  <p className="mt-3 max-w-full break-words text-[15px] leading-7 text-slate-300">{group.description}</p>
+                <section key={group.title} className="min-w-0 rounded-xl border border-line bg-card-hover p-5">
+                  <h2 className="text-[28px] font-semibold leading-tight text-heading">{group.title}</h2>
+                  <p className="mt-3 max-w-full break-words text-[15px] leading-7 text-body">{group.description}</p>
                   <div className="mt-6 grid gap-3">
                     {groupSegments.map((segment) => {
                       const active = segment.id === selectedId;
@@ -52,14 +52,14 @@ export function ChainPage() {
                           type="button"
                           onClick={() => setSelectedId(segment.id)}
                           className={[
-                            "min-w-0 rounded-2xl border px-4 py-3 text-left transition",
+                            "min-w-0 rounded-xl border px-4 py-3 text-left transition",
                             active
-                              ? "border-cyan-300/70 bg-cyan-300/14 shadow-[0_0_18px_rgba(34,211,238,0.16)]"
-                              : "border-cyan-300/14 bg-slate-950/46 hover:border-cyan-300/42 hover:bg-cyan-300/8",
+                              ? "border-accent bg-accent-soft"
+                              : "border-line bg-card hover:border-line-strong hover:bg-card-hover",
                           ].join(" ")}
                         >
-                          <span className="block break-words text-[17px] font-semibold leading-6 text-slate-50">{segment.name}</span>
-                          <span className="mt-1 block overflow-hidden text-ellipsis break-words text-sm leading-6 text-slate-400">
+                          <span className="block break-words text-[17px] font-semibold leading-6 text-heading">{segment.name}</span>
+                          <span className="mt-1 block overflow-hidden text-ellipsis break-words text-sm leading-6 text-muted">
                             {segment.summary}
                           </span>
                         </button>
@@ -72,10 +72,10 @@ export function ChainPage() {
           </div>
         </GlassCard>
 
-        <GlassCard className="sticky top-8 self-start transition-all duration-300">
-          <p className="break-words text-sm font-semibold text-cyan-300">{selected.category} / {selected.parent ?? "一级节点"}</p>
-          <h2 className="mt-2 break-words text-2xl font-semibold leading-tight text-slate-50">{selected.name}</h2>
-          <p className="mt-3 break-words text-sm leading-7 text-slate-300">{selected.whatItDoes}</p>
+        <GlassCard className="sticky top-20 self-start">
+          <p className="break-words text-sm font-semibold text-accent">{selected.category} / {selected.parent ?? "一级节点"}</p>
+          <h2 className="mt-2 break-words text-2xl font-semibold leading-tight text-heading">{selected.name}</h2>
+          <p className="mt-3 break-words text-sm leading-7 text-body">{selected.whatItDoes}</p>
           <InfoBlock title="核心壁垒" items={selected.coreBarriers} />
           <InfoBlock title="需求驱动" items={selected.demandDrivers} />
           <InfoBlock title="代表公司" items={selected.exampleCompanies.map((company) => `${company.name} ${company.code}`)} />
@@ -93,9 +93,9 @@ export function ChainPage() {
 function InfoBlock({ title, items }: { title: string; items: string[] }) {
   return (
     <div className="mt-5">
-      <h3 className="text-sm font-semibold text-slate-100">{title}</h3>
+      <h3 className="text-sm font-semibold text-heading">{title}</h3>
       <div className="mt-2 flex flex-wrap gap-2">
-        {items.length ? items.map((item) => <Badge key={item}>{item}</Badge>) : <span className="text-sm text-slate-400">暂无示例</span>}
+        {items.length ? items.map((item) => <Badge key={item}>{item}</Badge>) : <span className="text-sm text-muted">暂无示例</span>}
       </div>
     </div>
   );

@@ -28,10 +28,10 @@ export function GlossaryPage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {filtered.map((term) => (
           <GlassCard key={term.id}>
-            <p className="text-sm font-semibold text-cyan-300">{term.category}</p>
-            <h2 className="mt-2 text-xl font-semibold text-slate-50">{term.term}</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-300">{term.plainExplanation}</p>
-            <p className="mt-3 rounded-2xl border border-cyan-300/15 bg-slate-950/42 p-3 text-sm leading-6 text-slate-300">{term.technicalExplanation}</p>
+            <p className="text-sm font-semibold text-accent">{term.category}</p>
+            <h2 className="mt-2 text-xl font-semibold text-heading">{term.term}</h2>
+            <p className="mt-3 text-sm leading-7 text-body">{term.plainExplanation}</p>
+            <p className="mt-3 rounded-2xl border border-accent/20 bg-card-hover p-3 text-sm leading-6 text-body">{term.technicalExplanation}</p>
             <div className="mt-4 flex flex-wrap gap-2">{term.relatedTerms.map((item) => <Badge key={item} tone="blue">{item}</Badge>)}</div>
           </GlassCard>
         ))}

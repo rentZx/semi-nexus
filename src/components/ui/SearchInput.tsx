@@ -8,13 +8,13 @@ type SearchInputProps = {
 
 export function SearchInput({ value, onChange, placeholder }: SearchInputProps) {
   return (
-    <label className="flex min-h-12 items-center gap-3 rounded-2xl border border-cyan-300/25 bg-slate-950/58 px-4 text-cyan-200 shadow-[0_0_24px_rgba(34,211,238,0.08)] backdrop-blur-xl">
-      <Search className="h-4 w-4" />
+    <label className="flex min-h-12 items-center gap-3 rounded-xl border border-line bg-card px-4 shadow-card transition focus-within:border-accent">
+      <Search className="h-4 w-4 shrink-0 text-muted" />
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="w-full bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-500"
+        className="w-full bg-transparent text-sm text-heading outline-none placeholder:text-muted"
       />
     </label>
   );

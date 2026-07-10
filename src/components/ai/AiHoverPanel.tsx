@@ -27,14 +27,14 @@ export function AiHoverPanel({ node, locked }: AiHoverPanelProps) {
   return (
     <aside className="glass max-h-[calc(100dvh-10rem)] min-w-0 overflow-y-auto rounded-[1.75rem] p-5 shadow-2xl">
       <div className="flex items-center justify-between gap-3 pr-7">
-        <p className="truncate text-sm font-semibold text-cyan-300">{view.category}</p>
+        <p className="truncate text-sm font-semibold text-accent">{view.category}</p>
         <Badge tone={locked ? "amber" : "cyan"}>{locked ? "已锁定" : node ? "节点详情" : "总览"}</Badge>
       </div>
-      <h2 className="mt-3 text-2xl font-semibold text-slate-50">{view.label}</h2>
-      <p className="mt-4 text-sm leading-7 text-slate-300">{view.summary}</p>
+      <h2 className="mt-3 text-2xl font-semibold text-heading">{view.label}</h2>
+      <p className="mt-4 text-sm leading-7 text-body">{view.summary}</p>
 
       <PanelBlock icon={<Cpu className="h-4 w-4" />} title="为什么重要">
-        <p className="text-sm leading-7 text-slate-300">{view.whyImportant}</p>
+        <p className="text-sm leading-7 text-body">{view.whyImportant}</p>
       </PanelBlock>
 
       <PanelBlock icon={<LinkIcon className="h-4 w-4" />} title="强相关节点">
@@ -46,7 +46,7 @@ export function AiHoverPanel({ node, locked }: AiHoverPanelProps) {
       </PanelBlock>
 
       <PanelBlock icon={<ArrowRight className="h-4 w-4" />} title="需求传导">
-        <p className="rounded-2xl border border-cyan-300/12 bg-slate-950/34 p-3 text-sm leading-7 text-slate-300">{view.benefitLogic}</p>
+        <p className="rounded-2xl border border-accent/15 bg-card-hover p-3 text-sm leading-7 text-body">{view.benefitLogic}</p>
       </PanelBlock>
 
       <PanelBlock icon={<Building2 className="h-4 w-4" />} title="相关公司">
@@ -57,19 +57,19 @@ export function AiHoverPanel({ node, locked }: AiHoverPanelProps) {
                 <Link
                   key={`${company.name}-${company.code}`}
                   to={`/companies/${company.code}`}
-                  className="rounded-2xl border border-cyan-300/12 bg-slate-950/34 px-3 py-2 text-sm text-slate-200 transition hover:border-cyan-300/45 hover:bg-cyan-300/10"
+                  className="rounded-2xl border border-accent/15 bg-card-hover px-3 py-2 text-sm text-body transition hover:border-cyan-300/45 hover:bg-accent-soft"
                 >
-                  {company.name} <span className="text-slate-500">{company.code}</span>
+                  {company.name} <span className="text-heading0">{company.code}</span>
                 </Link>
               ) : (
-                <span key={company.name} className="rounded-2xl border border-cyan-300/12 bg-slate-950/34 px-3 py-2 text-sm text-slate-200">
+                <span key={company.name} className="rounded-2xl border border-accent/15 bg-card-hover px-3 py-2 text-sm text-body">
                   {company.name}
                 </span>
               )
             )}
           </div>
         ) : (
-          <p className="text-sm leading-6 text-slate-400">该节点更偏产业环节或基础设施，暂不展开公司映射。</p>
+          <p className="text-sm leading-6 text-muted">该节点更偏产业环节或基础设施，暂不展开公司映射。</p>
         )}
       </PanelBlock>
 
@@ -103,8 +103,8 @@ export function AiHoverPanel({ node, locked }: AiHoverPanelProps) {
 function PanelBlock({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
     <section className="mt-5">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-100">
-        <span className="text-cyan-300">{icon}</span>
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-heading">
+        <span className="text-accent">{icon}</span>
         {title}
       </h3>
       {children}

@@ -58,13 +58,13 @@ export function AiLandscapeMap({ activeId, lockedId, onActiveChange, onLockChang
   }
 
   return (
-    <div className="glass hud-grid flex min-h-[680px] min-w-0 flex-col overflow-hidden rounded-[2rem] p-5" onClick={handleCanvasClick}>
+    <div className="surface flex min-h-[680px] min-w-0 flex-col overflow-hidden rounded-[2rem] p-5" onClick={handleCanvasClick}>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 px-1">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300/90">AI Infrastructure Map</p>
-          <h2 className="mt-1 text-2xl font-semibold text-slate-50">AI 算力产业链核心图</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent/70">AI Infrastructure Map</p>
+          <h2 className="mt-1 text-2xl font-semibold text-heading">AI 算力产业链核心图</h2>
         </div>
-        <div className="flex flex-wrap gap-2 text-xs text-slate-300">
+        <div className="flex flex-wrap gap-2 text-xs text-body">
           {Object.entries(pathStyle).map(([key, item]) => (
             <span key={key} className="rounded-full border px-3 py-1.5" style={{ borderColor: `${item.color}55`, color: item.color }}>
               {item.label}

@@ -2,29 +2,32 @@ import { cn } from "../../utils/cn";
 
 type BadgeProps = {
   children: React.ReactNode;
-  tone?: "blue" | "cyan" | "violet" | "amber" | "slate";
+  tone?: "neutral" | "accent" | "violet" | "amber" | "blue" | "cyan" | "success" | "danger";
   active?: boolean;
   onClick?: () => void;
 };
 
-const toneClass = {
-  blue: "bg-sky-400/10 text-sky-200 ring-sky-400/35 shadow-[0_0_16px_rgba(56,189,248,0.12)]",
-  cyan: "bg-cyan-400/10 text-cyan-200 ring-cyan-400/35 shadow-[0_0_16px_rgba(34,211,238,0.12)]",
-  violet: "bg-violet-400/10 text-violet-200 ring-violet-400/35 shadow-[0_0_16px_rgba(139,92,246,0.12)]",
-  amber: "bg-amber-400/10 text-amber-200 ring-amber-400/35 shadow-[0_0_16px_rgba(245,158,11,0.12)]",
-  slate: "bg-slate-900/70 text-slate-200 ring-slate-700/70",
+const toneClass: Record<NonNullable<BadgeProps["tone"]>, string> = {
+  neutral: "bg-card-hover text-body border-line",
+  accent: "bg-accent-soft text-accent border-accent/20",
+  violet: "bg-violet-soft text-violet border-violet/20",
+  amber: "bg-amber-soft text-amber border-amber/20",
+  blue: "bg-blue-soft text-blue border-blue/20",
+  cyan: "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800",
+  success: "bg-success-soft text-success border-success/20",
+  danger: "bg-danger-soft text-danger border-danger/20",
 };
 
-export function Badge({ children, tone = "slate", active, onClick }: BadgeProps) {
+export function Badge({ children, tone = "neutral", active, onClick }: BadgeProps) {
   const Component = onClick ? "button" : "span";
   return (
     <Component
       onClick={onClick}
       className={cn(
-        "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 transition",
+        "inline-flex min-h-8 items-center rounded-lg border px-3 py-1 text-xs font-medium transition",
         toneClass[tone],
-        active && "bg-cyan-300 text-slate-950 ring-cyan-200 shadow-[0_0_22px_rgba(34,211,238,0.26)]",
-        onClick && "hover:-translate-y-0.5 hover:ring-cyan-300/70"
+        active && "border-accent bg-accent text-accent-contrast",
+        onClick && "cursor-pointer hover:-translate-y-0.5 hover:shadow-card"
       )}
     >
       {children}

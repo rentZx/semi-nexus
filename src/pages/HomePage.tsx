@@ -1,15 +1,10 @@
-import { ArrowRight, BookOpen, BrainCircuit, Building2, Cpu, GitBranch, Radar, Route, X } from "lucide-react";
-import { useState } from "react";
+import { ArrowRight, BookOpen, BrainCircuit, Building2, Cpu, GitBranch, Route } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { Disclaimer } from "../components/Disclaimer";
-import { SemiconductorHeroMap } from "../components/home/SemiconductorHeroMap";
-import { SemiconductorHoverPanel } from "../components/home/SemiconductorHoverPanel";
 import { Button } from "../components/ui/Button";
 import { GlassCard } from "../components/ui/GlassCard";
-import { getChainOverviewNode } from "../data/chainOverview";
-import { glossary } from "../data/glossary";
 import { segments } from "../data/segments";
+import { glossary } from "../data/glossary";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const themes = [
@@ -31,81 +26,46 @@ const quickLinks = [
 
 export function HomePage() {
   const [progress] = useLocalStorage<string[]>("learning.completed", []);
-  const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
-  const [lockedNodeId, setLockedNodeId] = useState<string | null>(null);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const selectedNode = getChainOverviewNode(lockedNodeId ?? activeNodeId) ?? null;
   const done = Math.min(progress.length, 12);
-  const chartData = [
-    { name: "已完成", value: done },
-    { name: "未完成", value: Math.max(12 - done, 0) },
-  ];
+  const pct = Math.round((done / 12) * 100);
 
   return (
-    <div className="min-w-0 overflow-x-hidden">
-      <section className="fullscreen-cockpit -mx-4 -mt-6 sm:-mx-6 lg:-mx-20 lg:-mt-8">
-        <div className="absolute inset-0 p-4 sm:p-6 lg:p-8">
-          <SemiconductorHeroMap
-            activeId={activeNodeId}
-            lockedId={lockedNodeId}
-            onActiveChange={(id) => {
-              setActiveNodeId(id);
-            }}
-            onLockChange={(id) => {
-              setLockedNodeId(id);
-              if (id) setDetailOpen(true);
-            }}
-          />
+    <div className="min-w-0 space-y-8">
+      {/* Hero */}
+      <section className="surface px-6 py-10 sm:px-10 sm:py-14">
+        <p className="text-sm font-semibold text-accent">SemiNexus V3.0</p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-heading sm:text-5xl">
+          半导体产业链学习地图
+        </h1>
+        <p className="mt-4 max-w-2xl text-base leading-8 text-body">
+          从产业链全景到每个细分环节，从制造流程到 A 股映射，系统理解半导体与 AI 算力的上下游关系。
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button to="/chain" icon={<ArrowRight className="h-4 w-4" />}>
+            进入产业链地图
+          </Button>
+          <Button to="/ai-computing" variant="secondary">
+            查看 AI 产业链
+          </Button>
         </div>
-
-        <div className="pointer-events-none absolute left-6 top-6 z-20 max-w-[520px] sm:left-8 sm:top-8 lg:left-28">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300/90">SemiNexus V2.3</p>
-          <h1 className="mt-2 text-2xl font-semibold text-slate-50 sm:text-4xl">半导体产业链动态主图</h1>
-        </div>
-
-        {detailOpen ? (
-          <div className="absolute right-4 top-24 z-30 max-h-[calc(100dvh-8rem)] w-[min(390px,calc(100vw-2rem))] sm:right-6 lg:right-8">
-            <button
-              type="button"
-              onClick={() => setDetailOpen(false)}
-              className="absolute -right-2 -top-2 z-10 grid h-9 w-9 place-items-center rounded-full border border-cyan-300/20 bg-slate-950/90 text-slate-200 shadow-lg"
-              aria-label="关闭详情"
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <SemiconductorHoverPanel node={selectedNode} locked={Boolean(lockedNodeId)} />
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setDetailOpen(true)}
-            className="absolute right-5 top-24 z-30 rounded-2xl border border-cyan-300/20 bg-slate-950/78 px-4 py-3 text-sm font-semibold text-cyan-100 shadow-xl backdrop-blur-xl"
-          >
-            打开详情
-          </button>
-        )}
       </section>
 
-      <section className="grid min-w-0 gap-5 pt-8 lg:grid-cols-[1fr_340px]">
-        <GlassCard className="p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold text-cyan-300">从主图进入学习</p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-50">半导体与 AI 产业链学习入口</h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
-                说明、功能入口、术语和学习路线全部下移，首屏只让产业链动态主图承担视觉重点。
-              </p>
-            </div>
-            <Button to="/ai-computing" icon={<ArrowRight className="h-4 w-4" />}>查看 AI 产业链</Button>
-          </div>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      {/* Quick links + progress */}
+      <section className="grid min-w-0 gap-5 lg:grid-cols-[1fr_320px]">
+        <GlassCard>
+          <h2 className="text-xl font-semibold text-heading">学习入口</h2>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {quickLinks.map((item) => {
               const Icon = item.icon;
               return (
-                <Link key={item.to} to={item.to} className="soft-card rounded-2xl p-4 transition hover:border-cyan-300/45 hover:bg-cyan-300/8">
-                  <Icon className="h-5 w-5 text-cyan-300" />
-                  <h3 className="mt-3 text-base font-semibold text-slate-50">{item.label}</h3>
-                  <p className="mt-2 text-sm text-slate-300">{item.text}</p>
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="surface-flat p-4 transition hover:border-line-strong hover:bg-card-hover"
+                >
+                  <Icon className="h-5 w-5 text-accent" />
+                  <h3 className="mt-3 text-base font-semibold text-heading">{item.label}</h3>
+                  <p className="mt-1.5 text-sm text-muted">{item.text}</p>
                 </Link>
               );
             })}
@@ -113,34 +73,35 @@ export function HomePage() {
         </GlassCard>
 
         <GlassCard>
-          <h2 className="text-lg font-semibold text-slate-50">学习进度</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-300">完成学习路线中的模块后，这里会自动更新。</p>
-          <div className="mt-5 h-44">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={chartData} dataKey="value" innerRadius={54} outerRadius={74} startAngle={90} endAngle={450}>
-                  <Cell fill="#22d3ee" />
-                  <Cell fill="rgba(148,163,184,0.18)" />
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
+          <h2 className="text-lg font-semibold text-heading">学习进度</h2>
+          <p className="mt-2 text-sm text-muted">完成学习路线中的模块后自动更新。</p>
+          <div className="mt-6 flex items-end gap-2">
+            <span className="text-4xl font-bold text-accent">{done}</span>
+            <span className="pb-1 text-lg text-muted">/ 12</span>
           </div>
-          <p className="text-center text-3xl font-semibold text-cyan-100">{done}/12</p>
+          <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-card-hover">
+            <div
+              className="h-full rounded-full bg-accent transition-all duration-500"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <p className="mt-2 text-sm text-muted">{pct}% 完成</p>
+          <Button to="/learn" variant="ghost" className="mt-4 px-0">
+            继续学习 <ArrowRight className="h-4 w-4" />
+          </Button>
         </GlassCard>
       </section>
 
-      <section className="pt-8">
-        <h2 className="mb-4 flex items-center gap-2 text-2xl font-semibold text-slate-50"><Radar className="h-6 w-6 text-cyan-300" /> 当前主线雷达</h2>
+      {/* Themes */}
+      <section>
+        <h2 className="mb-4 text-2xl font-semibold text-heading">当前主线</h2>
         <div className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-5">
           {themes.map((theme) => (
-            <GlassCard key={theme.name} className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
-              <h3 className="text-lg font-semibold text-slate-50">{theme.name}</h3>
-              <p className="mt-3 text-sm leading-6 text-slate-300">{theme.text}</p>
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-800">
-                <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-cyan-300 to-violet-400 shadow-[0_0_16px_rgba(34,211,238,0.22)]" />
-              </div>
-              <p className="mt-4 text-xs text-slate-400">关联环节：{theme.links.join(" / ")}</p>
-              <Link to="/segments" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-cyan-300">
+            <GlassCard key={theme.name} interactive>
+              <h3 className="text-lg font-semibold text-heading">{theme.name}</h3>
+              <p className="mt-2 text-sm leading-6 text-body">{theme.text}</p>
+              <p className="mt-4 text-xs text-muted">{theme.links.join(" / ")}</p>
+              <Link to="/segments" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent">
                 查看详情 <ArrowRight className="h-4 w-4" />
               </Link>
             </GlassCard>
@@ -148,26 +109,32 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="grid min-w-0 gap-4 pt-8 md:grid-cols-3">
+      {/* Chain overview cards */}
+      <section className="grid min-w-0 gap-4 md:grid-cols-3">
         {(["上游支撑", "中游核心", "下游应用"] as const).map((category) => (
           <GlassCard key={category}>
-            <p className="text-sm font-semibold text-cyan-300">{category}</p>
-            <h2 className="mt-2 text-xl font-semibold text-slate-50">
+            <p className="text-sm font-semibold text-accent">{category}</p>
+            <h2 className="mt-2 text-xl font-semibold text-heading">
               {category === "上游支撑" ? "设备、材料、EDA/IP" : category === "中游核心" ? "设计、制造、封测" : "AI服务器、汽车、终端"}
             </h2>
-            <p className="mt-3 text-sm leading-6 text-slate-300">
-              共 {segments.filter((segment) => segment.category === category).length} 个学习节点，覆盖作用、壁垒、驱动和风险。
+            <p className="mt-3 text-sm leading-6 text-body">
+              共 {segments.filter((s) => s.category === category).length} 个学习节点。
             </p>
           </GlassCard>
         ))}
       </section>
 
-      <section className="grid min-w-0 gap-4 py-8 lg:grid-cols-[1fr_1fr]">
+      {/* Glossary chips + disclaimer */}
+      <section className="grid min-w-0 gap-4 lg:grid-cols-[1fr_1fr]">
         <GlassCard>
-          <h2 className="text-xl font-semibold text-slate-50">知识芯片库</h2>
+          <h2 className="text-xl font-semibold text-heading">知识芯片库</h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {glossary.slice(0, 16).map((term) => (
-              <Link key={term.id} to={`/glossary?term=${term.id}`} className="rounded-full border border-cyan-300/20 bg-slate-900/70 px-3 py-1 text-sm text-cyan-100">
+              <Link
+                key={term.id}
+                to={`/glossary?term=${term.id}`}
+                className="rounded-lg border border-line bg-card-hover px-3 py-1 text-sm text-accent transition hover:border-accent/30"
+              >
                 {term.term}
               </Link>
             ))}
