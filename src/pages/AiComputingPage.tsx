@@ -36,8 +36,8 @@ const colorMap = {
 export function AiComputingPage() {
   const [activeNodeId, setActiveNodeId] = useState<string | null>("ai-server");
   const [lockedNodeId, setLockedNodeId] = useState<string | null>(null);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const selectedNode = getAiLandscapeNode(lockedNodeId ?? activeNodeId) ?? null;
+  const detailOpen = lockedNodeId !== null;  // panel only opens on click-lock, never on hover
+  const selectedNode = getAiLandscapeNode(lockedNodeId) ?? null;
 
   return (
     <div className="page-enter min-w-0 overflow-x-hidden">
@@ -76,11 +76,12 @@ export function AiComputingPage() {
           lockedId={lockedNodeId}
           onActiveChange={(id) => {
             setActiveNodeId(id);
-            if (id) setDetailOpen(true);
+            // No layout change on hover — only highlight
           }}
           onLockChange={(id) => {
+            // Click toggles lock: lock→panel opens, unlock→panel closes
             setLockedNodeId(id);
-            if (id) setDetailOpen(true);
+            if (id) setActiveNodeId(id);
           }}
         />
 
@@ -89,13 +90,13 @@ export function AiComputingPage() {
           <div className="relative">
             <button
               type="button"
-              onClick={() => setDetailOpen(false)}
+              onClick={() => setLockedNodeId(null)}
               className="absolute right-0 top-0 z-10 grid h-8 w-8 place-items-center rounded-full border border-line bg-card text-muted shadow-sm transition hover:bg-card-hover hover:text-body"
               aria-label="关闭详情"
             >
               <X className="h-4 w-4" />
             </button>
-            <AiHoverPanel node={selectedNode} locked={Boolean(lockedNodeId)} />
+            <AiHoverPanel node={selectedNode} locked={true} />
           </div>
         )}
       </div>
